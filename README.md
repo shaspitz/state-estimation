@@ -1,2 +1,2 @@
 # KF-StateEstimation
-Various python scripts solving problems involving Kalman filtering and other state estimation techniques.
+Various Python scripts solving problems involving Kalman filtering and other state estimation techniques.
