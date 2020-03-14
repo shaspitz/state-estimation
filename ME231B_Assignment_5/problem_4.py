@@ -11,35 +11,65 @@ import matplotlib.pyplot as plt
 
 # This problem involves the implementation of a time-varying Kalman filter for a system with uniform (ie non-Gaussian) process and measurement noises
 
-# Time-varying linear system as given in problem statement
+# Time-invariant linear system as given in problem statement
+global N, A, H
 N = 2
-A = np.array([[0.8, 0.6], [-0.6, 0.8]])
-H = np.array([1, 0])
-
-# Initialize prior estimate and prior covariance of state (at k = 0), and compute first time update 
-xm, Pm = 0, np.array([[3, 0], [0, 1]])
+A = np.matrix([[0.8, 0.6], [-0.6, 0.8]])
+H = np.matrix([1, 0])
 
 # Time-invariant process and measurement noises covariance given as identity matrix
 global V, W
-V, W = np.eye(N, dtype = int), np.eye(N, dtype = int)
+V, W = np.eye(N), np.eye(1)
 
 # Mean of process noise and measurement noise given as zero
 E_v, E_w = 0, 0
+
+# Function that returns value corresponding to uniform dist matching required mean/variance for process and measurement noises
+r_uniform = lambda : np.random.uniform(-np.sqrt(3), np.sqrt(3))
+
+# Define measurement and time update for Kalman Filter implementation
+def meas_update(xp, Pp, z):
+    K = Pp*np.transpose(H)*np.linalg.inv( H*Pp*np.transpose(H) + W )
+    xm = xp + K*(z - H*xp)
+    Pm = (np.eye(N) - K*H)*Pp*np.transpose(np.eye(N) - K*H) + K*W*np.transpose(K)
+    return xm, Pm
+    
+def time_update(xm, Pm):
+    xp = A*xm
+    Pp = A*Pm*np.transpose(A) + V
+    return xp, Pp
+
+# Initialize prior estimate and prior covariance of state (at k = 0)
+xm, Pm = np.zeros([2,1]), np.array([[3, 0], [0, 1]])
 
 T_f = 11 # Simulation Timesteps (0 included)
 sim_tot = 10000 # Number of simulations
 
 # preallocate parameters
-e = np.zeros(sim_tot, T_f)
-
-def time_update(A, xm, Pm):
-    x = A*xm
-    Pp = A*Pm*np.transpose(A) + np.random.uniform()
+e = np.zeros([sim_tot, T_f, N]) # there will be blank column 0
+x_est = np.zeros([sim_tot, T_f, N]) # zeros for initial x_est are ok since mean is at zero
 
 for sim in range(0, sim_tot):
-    for k in range(0, T_f):
-        # Simulate system
+    
+    for k in range(1, T_f): # Note that estimate for k=0 is initilized above
         
-        # Kalman filter estimation: measurement update
+        # Simulate system and measurement
+        x_true = A*xm + np.matrix([r_uniform(), r_uniform()]).transpose() # Process noise here
+        z = H*x_true + np.matrix([r_uniform()]) # Measurement noise here (scalar since z is scalar)
         
         # Kalman filter estimation: time update
+        xp, Pp = time_update(xm, Pm)
+        
+        # Kalman filter estimation: measurement update
+        xm, Pm = meas_update(xp, Pp, z)
+        
+        # Store results for plotting
+        x_est[sim, k, :] = xm.transpose()
+        e[sim, k, :] = (x_true - xm).transpose()
+        
+        
+        
+        
+        
+        
+        
