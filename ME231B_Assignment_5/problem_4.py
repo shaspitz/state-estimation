@@ -9,7 +9,10 @@ UC Berkeley ME231B Assignment #5 Problem 4
 import numpy as np
 import matplotlib.pyplot as plt
 
-# This problem involves the implementation of a time-varying Kalman filter for a system with uniform (ie non-Gaussian) process and measurement noises
+'''
+ This problem involves the implementation of a time-varying Kalman filter
+ for a system with uniform (ie non-Gaussian) process and measurement noises
+'''
 
 # Time-invariant linear system as given in problem statement
 global N, A, H
@@ -25,7 +28,7 @@ V, W = np.eye(N), np.eye(1)
 E_v, E_w = 0, 0
 
 # Function that returns value corresponding to uniform dist matching required mean/variance for process and measurement noises
-r_uniform = lambda : np.random.uniform(-np.sqrt(3), np.sqrt(3))
+r_uniform = lambda: np.random.uniform(-np.sqrt(3), np.sqrt(3))
 
 # Define measurement and time update for Kalman Filter implementation
 def meas_update(xp, Pp, z):
@@ -68,8 +71,7 @@ for sim in range(0, sim_tot):
         e[sim, k, :] = (x_true - xm).transpose()
         
         
-        
-        
+# Plotting
         
         
         
