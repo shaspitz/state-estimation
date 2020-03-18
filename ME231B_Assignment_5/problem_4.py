@@ -31,22 +31,21 @@ r_uniform = lambda: np.random.uniform(-np.sqrt(3), np.sqrt(3))
 
 # Define measurement and time update for Kalman Filter implementation
 
-
 def meas_update(xp, Pp, z):
-    K = Pp*np.transpose(H)*np.linalg.inv(H*Pp*np.transpose(H) + W)
+    K = Pp*H.transpose()*np.linalg.inv(H*Pp*H.transpose() + W)
     xm = xp + K*(z - H*xp)
-    Pm = (np.eye(N) - K*H)*Pp*np.transpose(np.eye(N) - K*H) + K*W*np.transpose(K)
+    Pm = (np.eye(N) - K*H)*Pp*np.transpose(np.eye(N) - K*H) + K*W*K.transpose()
     return xm, Pm
 
 
 def time_update(xm, Pm):
     xp = A*xm
-    Pp = A*Pm*np.transpose(A) + V
+    Pp = A*Pm*A.transpose() + V
     return xp, Pp
 
 
-# Initialize prior estimate and prior covariance of state (at k = 0)
-xm, Pm = np.zeros([2, 1]), np.array([[3, 0], [0, 1]])
+# Initialize estimate and covariance of state (at k = 0)
+xm, Pm = np.zeros([2, 1]), np.matrix([[3, 0], [0, 1]])
 
 T_f = 11  # Simulation Timesteps (0 included)
 sim_tot = 10000  # Number of simulations
