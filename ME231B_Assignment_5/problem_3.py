@@ -25,8 +25,7 @@ a, b = -1, 1
 global V, W
 V, W = (b - a)**2/12, (b - a) ** 2/12
 
-# Mean of process noise and measurement noise are zero from range [-1, 1]
-E_v, E_w = 0, 0
+# Process and measurement noise are zero mean, white, and independant
 
 ''' Function that returns value corresponding to uniform dist matching
  required mean/variance for process and measurement noises '''
@@ -37,17 +36,17 @@ def r_uniform(): return np.random.uniform(a, b)
 # Define measurement and time update for Kalman filter implementation
 
 
+def time_update(xm, Pm):
+    xp = A*xm
+    Pp = A*Pm*A + V
+    return xp, Pp
+
+
 def meas_update(xp, Pp, z):
     K = Pp*H*(H*Pp*H + W)**-1
     xm = xp + K*(z - H*xp)
     Pm = (np.eye(N) - K*H)*Pp*(np.eye(N) - K*H) + K*W*K
     return xm, Pm
-
-
-def time_update(xm, Pm):
-    xp = A*xm
-    Pp = A*Pm*A + V
-    return xp, Pp
 
 
 # Initialize estimate and covariance of state (at k = 0)

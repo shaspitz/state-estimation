@@ -22,8 +22,7 @@ H = np.matrix([1, 0])
 global V, W
 V, W = np.eye(N), np.eye(1)
 
-# Mean of process noise and measurement noise given as zero
-E_v, E_w = 0, 0
+# Process and measurement noise are zero mean, white, and independant
 
 ''' Function that returns value corresponding to uniform dist matching
  required mean/variance for process and measurement noises '''
@@ -34,17 +33,17 @@ def r_uniform(a, b): return np.random.uniform(a, b)
 # Define measurement and time update for Kalman Filter implementation
 
 
+def time_update(xm, Pm):
+    xp = A*xm
+    Pp = A*Pm*A.transpose() + V
+    return xp, Pp
+
+
 def meas_update(xp, Pp, z):
     K = Pp*H.transpose()*np.linalg.inv(H*Pp*H.transpose() + W)
     xm = xp + K*(z - H*xp)
     Pm = (np.eye(N) - K*H)*Pp*np.transpose(np.eye(N) - K*H) + K*W*K.transpose()
     return xm, Pm
-
-
-def time_update(xm, Pm):
-    xp = A*xm
-    Pp = A*Pm*A.transpose() + V
-    return xp, Pp
 
 
 # Define system propagation
@@ -76,7 +75,7 @@ for sim in range(0, sim_tot):
     x_true = np.matrix([r_uniform(-3, 3), r_uniform(-3, 3)]).transpose()
     e[sim, 0, :] = (x_true - xm).transpose()
 
-    for k in range(1, T_f):  # Note that estimate for k=0 is initilized above
+    for k in range(1, T_f):  # Note that estimate for k=0 is initialized above
 
         # Simulate system and measurement
         x_true, z = sym_sys(x_true)
