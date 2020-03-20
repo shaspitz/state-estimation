@@ -31,6 +31,7 @@ r_uniform = lambda: np.random.uniform(-np.sqrt(3), np.sqrt(3))
 
 # Define measurement and time update for Kalman Filter implementation
 
+
 def meas_update(xp, Pp, z):
     K = Pp*H.transpose()*np.linalg.inv(H*Pp*H.transpose() + W)
     xm = xp + K*(z - H*xp)
@@ -59,8 +60,10 @@ for sim in range(0, sim_tot):
     for k in range(1, T_f):  # Note that estimate for k=0 is initilized above
 
         # Simulate system and measurement
-        x_true = A*xm + np.matrix([r_uniform(), r_uniform()]).transpose()  # Process noise here
-        z = H*x_true + np.matrix([r_uniform()])  # Scalar measurement noise here
+        v_k = np.matrix([r_uniform(), r_uniform()]).transpose()  # Process noise
+        w_k = np.matrix([r_uniform()])  # Scalar measurement noise
+        x_true = A*xm + v_k
+        z = H*x_true + w_k
 
         # Kalman filter estimation: time update
         xp, Pp = time_update(xm, Pm)

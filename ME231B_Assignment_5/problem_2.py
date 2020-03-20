@@ -25,6 +25,11 @@ V, W = np.eye(N), np.eye(1)
 # Mean of process noise and measurement noise given as zero
 E_v, E_w = 0, 0
 
+'''Function that returns value corresponding to Gaussian dist matching
+ required mean/variance for process and measurement noises.
+ Note that mean = 0 and var = I for both v(k) and w(k)'''
+r_normal = lambda: np.random.normal(0, 1, 1)
+
 # Define measurement and time update for Kalman Filter implementation
 
 
@@ -42,78 +47,69 @@ def time_update(xm, Pm):
 
 
 # Initialize estimate and covariance of state (at k = 0)
-xm, Pm = np.zeros([2, 1]), np.matrix([[3, 0], [0, 1]])
+xm_0, Pm_0 = np.zeros([2, 1]), np.matrix([[3, 0], [0, 1]])
 
 # (a) Compute the PDF of y(1) given the observation z(1) = 2.22
 # First simulate prediction and measurement update steps of KF forward to k = 1
-xp, Pp = time_update(xm, Pm)
+xp, Pp = time_update(xm_0, Pm_0)
 xm, Pm = meas_update(xp, Pp, 2.22)
 
 '''
 Since output y is an affine linear transformation of GRV x(k), y(k) itself
 is a GRV with mean [1 1]*xm(k) and variance [1 1]*Pm(k)*[1 1]' (see writing)
 '''
-E_y = np.matrix([[1, 1]])*xm
-Var_y = np.matrix([[1, 1]])*Pm*np.matrix([[1, 1]]).transpose()
+E_y = lambda xm: np.matrix([[1, 1]])*xm
+Var_y = lambda Pm: np.matrix([[1, 1]])*Pm*np.matrix([[1, 1]]).transpose()
+
+E_y_val = E_y(xm)
+Var_y_val = Var_y(Pm)
+
 print(
     'Answer to (a): y(1) is normally distributed with mean: '
-    + repr(round(E_y[0, 0], 4))
+    + repr(round(E_y_val[0, 0], 4))
     + ' and variance: '
-    + repr(round(Var_y[0, 0], 4)))
+    + repr(round(Var_y_val[0, 0], 4))
+    )
 
 T_f = 11  # Simulation Timesteps (0 included)
-sim_tot = 10000  # Number of simulations
 
-# preallocate parameters
-e = np.zeros([sim_tot, T_f, N])  # blank column 0 for initial error
-x_est = np.zeros([sim_tot, T_f, N])  # zeros for initial x_est
-y = np.zeros([sim_tot, T_f])  # output is scalar
+# Initialize variance storage array with first two components at k = 0, 1
+Var_y_vec = np.zeros([T_f, 1])
+Var_y_vec[0] = Var_y(Pm_0)
+Var_y_vec[1] = Var_y_val
 
-'''
-for sim in range(0, sim_tot):
+for k in range(2, T_f):  # Note that estimates for k = 0, 1 is initilized above
 
-    for k in range(2, T_f):  # Note that estimate for k=0 is initilized above
+    # Simulate system and measurement
+    v_k = np.matrix([r_normal(), r_normal()]).transpose()  # Process noise
+    w_k = np.matrix([r_normal()])  # Scalar measurement noise
+    x_true = A*xm + v_k
+    z = H*x_true + w_k
 
-        # Simulate system and measurement
-        x_true = A*xm + np.matrix([r_uniform(), r_uniform()]).transpose()  # Process noise here
-        z = H*x_true + np.matrix([r_uniform()])  # Scalar measurement noise here
+    # Kalman filter estimation: time update
+    xp, Pp = time_update(xm, Pm)
 
-        # Kalman filter estimation: time update
-        xp, Pp = time_update(xm, Pm)
+    # Kalman filter estimation: measurement update
+    xm, Pm = meas_update(xp, Pp, z)
 
-        # Kalman filter estimation: measurement update
-        xm, Pm = meas_update(xp, Pp, z)
+    # Compute variance of y(k)
+    Var_y_vec[k] = Var_y(Pm)
 
-        # Store results for plotting
-        x_est[sim, k, :] = xm.transpose()
-        e[sim, k, :] = (x_true - xm).transpose()
+# Find k values for min and max variance of y(k)
+k_var_max = np.argmax(Var_y_vec)
+k_var_min = np.argmin(Var_y_vec)
 
-#  Display ensemble average and variance for each component of e(10) and estimator output
-print('Ensemble Average of First component for e(10): ' + repr(round(np.mean(e[:, 10, 0]), 4)))
-print('Ensemble Variance of First component for e(10): ' + repr(round(np.var(e[:, 10, 0]), 4)))
-print('Ensemble Average of First component for Estimator Output at Timestep 10: '
-+ repr(round(np.mean(x_est[:, 10, 0]), 4)) + '\n')
+print(
+    'Variance of y(k) at each timestep: '
+    + repr(Var_y_vec)
+    )
 
-print('Ensemble Average of Second component for e(10): ' + repr(round(np.mean(e[:, 10, 1]), 4)))
-print('Ensemble Variance of Second component for e(10): ' + repr(round(np.var(e[:, 10, 1]), 4)))
-print('Ensemble Average of Second component for Estimator Output at Timestep 10: '
-+ repr(round(np.mean(x_est[:, 10, 1]), 4)))
+print(
+    'Answer to (b): We have the least knowledge about y(k) at timestep: '
+    + repr(k_var_max)
+    + ' and we have the most knowledge about y(k) at timestep: '
+    + repr(k_var_min)
+    )
 
-#  Plotting
-num_bins = 20
-
-plt.figure(0)
-plt.hist(e[:, 10, 0], num_bins, facecolor='blue', edgecolor='black', alpha=1)
-plt.xlabel('First Component For Error e at timestep 10')
-plt.ylabel('Count')
-plt.title(r'Histogram of First Component for Error (e) at timestep 10')
-
-plt.figure(1)
-plt.hist(e[:, 10, 1], num_bins, facecolor='blue', edgecolor='black', alpha=1)
-plt.xlabel('Second Component For Error e at timestep 10')
-plt.ylabel('Count')
-plt.title(r'Histogram of Second Component for Error (e) at timestep 10')
-
-plt.show()
-
-'''
+''' intuitively it makes sense that we have the most knowledge of y(k) at k = 1
+ since we are given a deterministic measurement of z(1) = 2.22 '''
