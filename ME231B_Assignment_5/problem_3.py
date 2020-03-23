@@ -11,18 +11,17 @@ import numpy as np
 ''' This problem involves the implementation of a time-varying Kalman filter
  for a simple (scalar) system with uniform process and measurement noises '''
 
+# First define global vars
+
 # Time-invariant linear system as given in problem statement
-global N, A, H
 N = 1
 A = 1
 H = 1
 
 # x(0), v(k), and w(k) are all uniformly distributed in the range [-1, 1]
-global a, b
 a, b = -1, 1
 
 # Time-invariant process and measurement noise covariances (uniform)
-global V, W
 V, W = (b - a)**2/12, (b - a) ** 2/12
 
 # Process and measurement noise are zero mean, white, and independant
@@ -63,7 +62,12 @@ xm, Pm = meas_update(xp, Pp, z)
 
 print(
     'Kalman filter estimate at time k = 1 is: '
-    + repr(round(xm, 4))
+    + repr(np.round(xm, 4))
+    )
+
+print(
+    'With Pm at time k = 1 being: '
+    + repr(np.round(Pm[0, 0], 4))
     )
 
 print('Comments:')

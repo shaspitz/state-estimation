@@ -12,14 +12,14 @@ import matplotlib.pyplot as plt
 ''' This problem involves the implementation of a time-varying Kalman filter
  for a system with Gaussian process and measurement noises '''
 
+# First define global vars
+
 # Time-invariant linear system as given in problem statement
-global N, A, H
 N = 2
 A = np.matrix([[0.8, 0.6], [-0.6, 0.8]])
 H = np.matrix([1, 0])
 
 # Time-invariant process and measurement noise covariances given as identity
-global V, W
 V, W = np.eye(N), np.eye(1)
 
 # Process and measurement noise are zero mean, gaussian, and independant

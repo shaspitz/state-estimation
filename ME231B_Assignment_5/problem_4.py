@@ -12,14 +12,14 @@ import matplotlib.pyplot as plt
 ''' This problem involves the implementation of a time-varying Kalman filter
  for a system with uniform (ie non-Gaussian) process and measurement noises '''
 
+# First define global vars
+
 # Time-invariant linear system as given in problem statement
-global N, A, H
 N = 2
 A = np.matrix([[0.8, 0.6], [-0.6, 0.8]])
 H = np.matrix([1, 0])
 
 # Time-invariant process and measurement noise covariances given as identity
-global V, W
 V, W = np.eye(N), np.eye(1)
 
 # Process and measurement noise are zero mean, white, and independant
@@ -90,16 +90,24 @@ for sim in range(0, sim_tot):
         x_est[sim, k, :] = xm.transpose()
         e[sim, k, :] = (x_true - xm).transpose()
 
-#  Display ensemble average and variance for each component of e(10) and estimator output
-print('Ensemble Average of First component for e(10): ' + repr(round(np.mean(e[:, 10, 0]), 4)))
-print('Ensemble Variance of First component for e(10): ' + repr(round(np.var(e[:, 10, 0]), 4)))
-print('Ensemble Average of First component for Estimator Output at Timestep 10: '
-      + repr(round(np.mean(x_est[:, 10, 0]), 4)) + '\n')
+#  Display ensemble average, variance and est output for two components of e(10)
+print('Ensemble Average of First component for e(10): '
+      + repr(round(np.mean(e[:, 10, 0]), 4)))
+print('Ensemble Variance of First component for e(10): '
+      + repr(round(np.var(e[:, 10, 0]), 4)))
+print(
+    'Ensemble Average of First component for Estimator Output at Timestep 10: '
+    + repr(round(np.mean(x_est[:, 10, 0]), 4)) + '\n'
+      )
 
-print('Ensemble Average of Second component for e(10): ' + repr(round(np.mean(e[:, 10, 1]), 4)))
-print('Ensemble Variance of Second component for e(10): ' + repr(round(np.var(e[:, 10, 1]), 4)))
-print('Ensemble Average of Second component for Estimator Output at Timestep 10: '
-      + repr(round(np.mean(x_est[:, 10, 1]), 4)))
+print('Ensemble Average of Second component for e(10): '
+      + repr(round(np.mean(e[:, 10, 1]), 4)))
+print('Ensemble Variance of Second component for e(10): '
+      + repr(round(np.var(e[:, 10, 1]), 4)))
+print(
+    'Ensemble Average of Second component for Estimator Output at Timestep 10: '
+    + repr(round(np.mean(x_est[:, 10, 1]), 4))
+      )
 
 #  Plotting
 num_bins = 20
