@@ -185,19 +185,17 @@ N = 8
 d = 30  # constant supply of water d(k)
 alph = 0.3  # Flow balancing of 0.3
 
-A = np.array([[1-2*alph, alph, alph, 0, -1, 0, 0, 0],
-              [alph, 1-2*alph, alph, 0, 0, -1, 0, 0],
-              [alph, alph, 1-2*alph, 0, 0, 0, -1, 0],
-              [0, 0, alph, 1-alph, 0, 0, 0, -1],
-              [0, 0, 0, 0, 1, 0, 0, 0],
-              [0, 0, 0, 0, 0, 1, 0, 0],
-              [0, 0, 0, 0, 0, 0, 1, 0],
-              [0, 0, 0, 0, 0, 0, 0, 1]])
+A = np.concatenate((
+    np.concatenate((
+        np.array([[1-2*alph, alph, alph, 0],
+                  [alph, 1-2*alph, alph, 0],
+                  [alph, alph, 1-2*alph, 0],
+                  [0, 0, alph, 1-alph]]),
+        -1*np.eye(4)), axis=1),
+    np.concatenate((np.zeros((4, 4)), np.eye(4)), axis=1)),
+    axis=0)
 
-H = np.array([[1, 0, 0, 0, 0, 0, 0, 0],
-              [0, 1, 0, 0, 0, 0, 0, 0],
-              [0, 0, 1, 0, 0, 0, 0, 0],
-              [0, 0, 0, 1, 0, 0, 0, 0]])
+H = np.concatenate((np.eye(4), np.zeros((4, 4))), axis=1)
 
 # Time-invariant process and measurement noise covariances
 V = 0.1 * np.eye(N)
@@ -296,9 +294,7 @@ print(
 # Part c-iii, repeat part c with tank 3 sensor inactive
 
 # N, d, alpha, and A are same as before, H is redefined below
-H = np.array([[1, 0, 0, 0, 0, 0, 0, 0],
-              [0, 1, 0, 0, 0, 0, 0, 0],
-              [0, 0, 0, 1, 0, 0, 0, 0]])
+H = np.concatenate((H[0:2], H[3:4]), axis=0)
 
 # Process noise is the same as before, measurement noise redefined below
 W = 25 * np.eye(3)  # z(k) is of size 3
