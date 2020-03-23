@@ -16,8 +16,8 @@ import matplotlib.pyplot as plt
 
 # Time-invariant linear system as given in problem statement
 N = 2
-A = np.matrix([[0.8, 0.6], [-0.6, 0.8]])
-H = np.matrix([1, 0])
+A = np.array([[0.8, 0.6], [-0.6, 0.8]])
+H = np.array([[1, 0]])
 
 # Time-invariant process and measurement noise covariances given as identity
 V, W = np.eye(N), np.eye(1)
@@ -35,15 +35,15 @@ def r_normal(Ex, Var): return np.random.normal(Ex, Var, 1)
 
 
 def time_update(xm, Pm):
-    xp = A*xm
-    Pp = A*Pm*A.transpose() + V
+    xp = A @ xm
+    Pp = A @ Pm @ A.transpose() + V
     return xp, Pp
 
 
 def meas_update(xp, Pp, z):
-    K = Pp*H.transpose()*np.linalg.inv(H*Pp*H.transpose() + W)
-    xm = xp + K*(z - H*xp)
-    Pm = (np.eye(N) - K*H)*Pp*np.transpose(np.eye(N) - K*H) + K*W*K.transpose()
+    K = Pp @ H.transpose() @ np.linalg.inv(H @ Pp @ H.transpose() + W)
+    xm = xp + K @ (z - H @ xp)
+    Pm = (np.eye(N) - K @ H) @ Pp @ (np.eye(N) - K @ H).transpose() + K @ W @ K.transpose()
     return xm, Pm
 
 

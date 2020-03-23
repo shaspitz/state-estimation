@@ -16,8 +16,8 @@ import matplotlib.pyplot as plt
 
 # Time-invariant linear system as given in problem statement
 N = 2
-A = np.matrix([[0.8, 0.6], [-0.6, 0.8]])
-H = np.matrix([1, 0])
+A = np.array([[0.8, 0.6], [-0.6, 0.8]])
+H = np.array([[1, 0]])
 
 # Time-invariant process and measurement noise covariances given as identity
 V, W = np.eye(N), np.eye(1)
@@ -34,15 +34,15 @@ def r_uniform(a, b): return np.random.uniform(a, b)
 
 
 def time_update(xm, Pm):
-    xp = A*xm
-    Pp = A*Pm*A.transpose() + V
+    xp = A @ xm
+    Pp = A @ Pm @ A.transpose() + V
     return xp, Pp
 
 
 def meas_update(xp, Pp, z):
-    K = Pp*H.transpose()*np.linalg.inv(H*Pp*H.transpose() + W)
-    xm = xp + K*(z - H*xp)
-    Pm = (np.eye(N) - K*H)*Pp*np.transpose(np.eye(N) - K*H) + K*W*K.transpose()
+    K = Pp @ H.transpose() @ np.linalg.inv(H @ Pp @ H.transpose() + W)
+    xm = xp + K @ (z - H @ xp)
+    Pm = (np.eye(N) - K @ H) @ Pp @ (np.eye(N) - K @ H).transpose() + K @ W @ K.transpose()
     return xm, Pm
 
 
@@ -51,29 +51,29 @@ def meas_update(xp, Pp, z):
 
 def sym_sys(x_true):
     # a = -sqrt(3), b = sqrt(3) for uniform dist of v_k and w_k (see writing)
-    v_k = np.matrix([r_uniform(-np.sqrt(3), np.sqrt(3)), r_uniform(-np.sqrt(3),
-        np.sqrt(3))]).transpose()  # Process noise
-    w_k = np.matrix([r_uniform(-np.sqrt(3), np.sqrt(3))])  # measurement noise
-    x_true = A*x_true + v_k
-    z = H*x_true + w_k
+    v_k = np.array([[r_uniform(-np.sqrt(3), np.sqrt(3))], [r_uniform(-np.sqrt(3),
+        np.sqrt(3))]])  # Process noise
+    w_k = np.array([r_uniform(-np.sqrt(3), np.sqrt(3))])  # measurement noise
+    x_true = A @ x_true + v_k
+    z = H @ x_true + w_k
     return x_true, z
 
 
 # Initialize estimate and covariance of state (at k = 0)
-xm, Pm = np.zeros([2, 1]), np.matrix([[3, 0], [0, 1]])
+xm, Pm = np.zeros((2, 1)), np.array([[3, 0], [0, 1]])
 
 T_f = 11  # Simulation Timesteps (0 included)
 sim_tot = 10000  # Number of simulations
 
 # preallocate parameters
-e = np.zeros([sim_tot, T_f, N])
-x_est = np.zeros([sim_tot, T_f, N])  # zeros for initial x_est
+e = np.zeros((sim_tot, T_f, N))
+x_est = np.zeros((sim_tot, T_f, N))  # zeros for initial x_est
 
 for sim in range(0, sim_tot):
 
     # Initalize true state, a = -3, b = 3 for uniform dist of x[0] (see writing)
-    x_true = np.matrix([r_uniform(-3, 3), r_uniform(-3, 3)]).transpose()
-    e[sim, 0, :] = (x_true - xm).transpose()
+    x_true = np.array([[r_uniform(-3, 3)], [r_uniform(-3, 3)]])
+    e[sim, 0, :] = (x_true - xm).ravel()
 
     for k in range(1, T_f):  # Note that estimate for k=0 is initialized above
 
@@ -87,8 +87,8 @@ for sim in range(0, sim_tot):
         xm, Pm = meas_update(xp, Pp, z)
 
         # Store results for plotting
-        x_est[sim, k, :] = xm.transpose()
-        e[sim, k, :] = (x_true - xm).transpose()
+        x_est[sim, k, :] = xm.ravel()
+        e[sim, k, :] = (x_true - xm).ravel()
 
 #  Display ensemble average, variance and est output for two components of e(10)
 print('Ensemble Average of First component for e(10): '

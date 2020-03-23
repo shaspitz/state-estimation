@@ -182,7 +182,11 @@ plt.xlabel('Timestep (k)')
 plt.ylabel('Uncertainty of Estimated Consumption of Water, c')
 plt.title(r'Uncertainty of Estimated Consumption of Water, c vs Time (Part b)')
 
-plt.show()
+# Part (c)
 
+
+
+
+plt.show()
 print(0)
 
