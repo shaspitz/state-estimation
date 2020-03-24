@@ -135,11 +135,11 @@ print(
  since we are given a deterministic measurement of z(1) = 2.22 '''
 
 print(
-    'Answer to (c): Expectation is linear, so E[e] = E[x(k)] - E[x_est(k)]. '
-    + 'Also, since E[x(0)] = 0 and E[v(k)] = 0, recursively the true'
-    + 'state evolves so that E[x(k)] = 0 for all k. ie E[e] is: '
-    + repr(0 - xm)
-    + ' Var[e] is... '
+    'Answer to (c): With all random variables having expecations of 0,'
+    ' and the KF being initialized with E[x0], it follows that the filter,'
+    ' is unbiased, ie E[e] is: '
+    + repr(0)
+    + ' and Var[e] is... '
     + repr(Pm)
     )
 
