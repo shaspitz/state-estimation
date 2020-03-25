@@ -7,8 +7,9 @@ UC Berkeley ME231B Assignment #6 Problem 1
 '''
 
 import numpy as np
+import scipy.linalg as sp
 
-''' Using the standard Kalman filter, for various k values, what
+''' (a) Using the standard Kalman filter, for various k values, what
 is the variance of the posterior estimation error? '''
 
 # Define global vars
@@ -83,3 +84,54 @@ for config in T_f:
     print('Variance of posterior estimation error for k = '
           + repr(k) + ' is: ' + repr(round(Pm[0, 0], 4)))
 
+
+''' (b) What is the steady-state Kalman filter for this system? Provide the
+gain, and the steady-state posterior variance. '''
+
+Pinf = sp.solve_discrete_are(A, H, V, W)  # No transpose on scalar A, H
+Kinf = Pinf * H * (H * Pinf * H + W) ** -1
+
+print('Steady state KF gain is: ' + repr(round(Kinf[0, 0], 4)))
+print('Steady state KF posterior vairance is: ' + repr(round(Pinf[0, 0], 4)))
+
+
+''' (c) Using now the steady-state Kalman filter to estimate the state, at various values for k,
+ what is the variance of the posterior estimation error? Comment on how this compares to the 
+ standard Kalman filter of part a.'''
+
+
+# Define scalar measurement update for SSKF implementation
+# Note that this functions is equivalent to above with SSKF gain
+
+
+def meas_update_ss(xp, Pp, z):
+    xm = xp + Kinf*(z - H*xp)  # equivalent to A * xp + Kinf * z (from notes)
+    Pm = (np.eye(N) - Kinf*H)*Pp*(np.eye(N) - Kinf*H) + Kinf*W*Kinf
+    return xm, Pm
+
+
+# Initialize estimate and covariance of state (at k = 0)
+xm, Pm = 0, 3
+
+# Initialize x_true at k = 0
+x_true = r_normal(0, 3)
+
+T_f = [2, 3, 11, 1001]  # Simulation Timesteps (0 included)
+Var_est = np.zeros((4, 1))
+
+for config in T_f:
+
+    for k in range(1, config):  # Note that estimate for k=0 is initialized above
+
+        # Simulate system and measurement
+        x_true, z = sym_sys(x_true)
+
+        # Kalman filter estimation: time update
+        xp, Pp = time_update(xm, Pm)
+
+        # Kalman filter estimation: measurement update
+        xm, Pm = meas_update_ss(xp, Pp, z)
+
+    # Print variance of posterior estimation error (Pm(k)) for each config
+    print('Variance of posterior estimation error for k = '
+          + repr(k) + ' is: ' + repr(round(Pm[0, 0], 4)))
