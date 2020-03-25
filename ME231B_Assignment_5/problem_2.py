@@ -36,14 +36,14 @@ def r_normal(Ex, Var): return np.random.normal(Ex, Var, 1)
 
 def time_update(xm, Pm):
     xp = A @ xm
-    Pp = A @ Pm @ A.transpose() + V
+    Pp = A @ Pm @ A.T + V
     return xp, Pp
 
 
 def meas_update(xp, Pp, z):
-    K = Pp @ H.transpose() @ np.linalg.inv(H @ Pp @ H.transpose() + W)
+    K = Pp @ H.T @ np.linalg.inv(H @ Pp @ H.T + W)
     xm = xp + K @ (z - H @ xp)
-    Pm = (np.eye(N) - K @ H) @ Pp @ (np.eye(N) - K @ H).transpose() + K @ W @ K.transpose()
+    Pm = (np.eye(N) - K @ H) @ Pp @ (np.eye(N) - K @ H).T + K @ W @ K.T
     return xm, Pm
 
 
@@ -52,15 +52,15 @@ def meas_update(xp, Pp, z):
 
 def sym_sys(x_true):
     # Expecation and Var of v_k, w_k = 0 and I respectively
-    v_k = np.matrix([r_normal(0, 1), r_normal(0, 1)])  # Process noise
-    w_k = np.matrix([r_normal(0, 1)])  # Scalar measurement noise
+    v_k = np.array([[r_normal(0, 1), r_normal(0, 1)]])  # Process noise
+    w_k = np.array([[r_normal(0, 1)]])  # Scalar measurement noise
     x_true = A*x_true + v_k
     z = H*x_true + w_k
     return x_true, z
 
 
 # Initialize estimate and covariance of state (at k = 0)
-xm_0, Pm_0 = np.zeros([2, 1]), np.matrix([[3, 0], [0, 1]])
+xm_0, Pm_0 = np.zeros((2, 1)), np.array([[3, 0], [0, 1]])
 
 # (a) Compute the PDF of y(1) given the observation z(1) = 2.22
 # First simulate prediction and measurement update steps of KF forward to k = 1
@@ -73,10 +73,10 @@ is a GRV with mean [1 1]*xm(k) and variance [1 1]*Pm(k)*[1 1]' (see writing)
 '''
 
 
-def E_y(xm): return np.matrix([[1, 1]])*xm
+def E_y(xm): return np.array([[1, 1]])*xm
 
 
-def Var_y(Pm): return np.matrix([[1, 1]])*Pm*np.matrix([[1, 1]]).transpose()
+def Var_y(Pm): return np.array([[1, 1]])*Pm*np.array([[1, 1]]).T
 
 
 E_y_val = E_y(xm)
@@ -92,14 +92,15 @@ print(
 T_f = 11  # Simulation Timesteps (0 included)
 
 # Initialize variance storage array with first components at k = 0
-Var_y_vec = np.zeros([T_f, 1])
-Var_y_vec[0] = Var_y(Pm_0)
+Var_y_vec = np.zeros([T_f, 2])
+print(Pm_0)
+Var_y_vec[0, 1] = Var_y(Pm_0)
 
 # Intialize xm, Pm
 xm, Pm = xm_0, Pm_0
 
 # Initalize true state
-x_true = np.matrix([r_normal(0, 3), r_normal(0, 1)])
+x_true = np.array([[r_normal(0, 3), r_normal(0, 1)]]).T
 
 for k in range(1, T_f):  # Note that estimates for k = 0 is initilized above
 
@@ -121,7 +122,7 @@ k_var_min = np.argmin(Var_y_vec)
 
 print(
     'Variance of y(k) at each timestep: '
-    + repr(Var_y_vec)
+    + repr(Var_y_vec[0, 0])
     )
 
 print(
@@ -157,9 +158,9 @@ x_est = np.zeros([sim_tot, T_f, N])  # zeros for initial x_est
 for sim in range(0, sim_tot):
 
     # Initalize true state
-    x_true = np.matrix([r_normal(0, 3), r_normal(0, 1)])
+    x_true = np.array([[r_normal(0, 3), r_normal(0, 1)]]).T
 
-    e[0, :] = (x_true - xm).transpose()
+    e[0, :] = x_true - xm
 
     for k in range(1, T_f):  # Note that estimate for k = 0 is initialized above
 

@@ -59,7 +59,7 @@ def sym_sys(x_true):
 
 
 # Initialize estimate and covariance of state (at k = 0)
-xm, Pm = 0, 3
+xm, Pm = 0, np.array([[3]])
 
 # Initialize x_true at k = 0
 x_true = r_normal(0, 3)
@@ -82,7 +82,7 @@ for config in T_f:
 
     # Print variance of posterior estimation error (Pm(k)) for each config
     print('Variance of posterior estimation error for k = '
-          + repr(k) + ' is: ' + repr(round(Pm[0, 0], 4)))
+          + repr(k) + ' is: ' + repr(round(Pp[0, 0], 4)))
 
 
 ''' (b) What is the steady-state Kalman filter for this system? Provide the
@@ -111,7 +111,7 @@ def meas_update_ss(xp, Pp, z):
 
 
 # Initialize estimate and covariance of state (at k = 0)
-xm, Pm = 0, 3
+xm, Pm = 0, np.array([[3]])
 
 # Initialize x_true at k = 0
 x_true = r_normal(0, 3)
@@ -134,4 +134,9 @@ for config in T_f:
 
     # Print variance of posterior estimation error (Pm(k)) for each config
     print('Variance of posterior estimation error for k = '
-          + repr(k) + ' is: ' + repr(round(Pm[0, 0], 4)))
+          + repr(k) + ' is: ' + repr(round(Pp[0, 0], 4)))
+
+print(' The steady state Kalman Filter had slightly worse performance (higher'
+      ' error variance) than the standard Kalman filter for k = 2.'
+      ' By k = 10 and 1000, both filters performed'
+      ' satisfactorily with Pp ~= Pinf ')
