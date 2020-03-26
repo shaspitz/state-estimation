@@ -77,3 +77,4 @@ print('The KF estimate here of 2/3 coincides with the MMSE estimate from'
       ' implementation between a standard KF and the optimal estimator from'
       ' problem 1 is that we do not compute the entire state pdf at each'
       ' timestep for a KF, only its MMSE estimate and variance.')
+
