@@ -10,7 +10,8 @@ import numpy as np
 import scipy.linalg as sp
 import sys
 
-''' Compute the steady-state Kalman filter gain Kinf, for the given system '''
+
+# (b)Compute the steady-state Kalman filter gain Kinf, for the given system
 
 # Define global vars
 
@@ -30,11 +31,13 @@ Kinf = Pinf * H * (H * Pinf * H + W) ** -1
 print('The steady-state Kalman filter gain, Kinf is: '
       + repr(round(Kinf[0, 0], 4)))
 
-''' The true system dynamics differ from the ones used to derive the estimator
+'''
+(b) The true system dynamics differ from the ones used to derive the estimator
 and are driven by parameter delta. For what parameters delta will the error
-e(k) remain bounded as k tends to infinity?'''
+e(k) remain bounded as k tends to infinity?
+'''
 
-# to test this, we run our KF and analyze e(k) for varying values of delta
+# To test this, we run our KF and analyze e(k) for varying values of delta
 
 '''Function that returns value corresponding to Gaussian dist matching
  required mean/variance for process and measurement noises.'''

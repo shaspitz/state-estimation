@@ -10,6 +10,14 @@ import numpy as np
 import scipy.linalg as sp
 
 '''
+You are investigating various trade-offs in the design of an autonomous blimp.
+The system dynamics are given, with the system state x(k)
+comprising the height (x1 in units of m) and vertical velocity (x2 in units of
+m/s) of the blimp, driven by a random acceleration.
+'''
+
+
+'''
 (a) Write a program that computes Jp as a function of the usual Kalman filter
 matrices A, V , H, and W. Use this program to confirm that the original system
  has Jp ~= 3:085m
@@ -27,7 +35,9 @@ H = np.array([[1, 0]])
 
 def noise_orig_sys():
     # Process and measurement noise covariances
-    return stdev**2*np.array([[1/4*dt**4, 1/2*dt**3], [1/2*dt**3, dt**2]]), m1**2
+    V = stdev**2*np.array([[1/4*dt**4, 1/2*dt**3], [1/2*dt**3, dt**2]])
+    W = m1**2
+    return V, W
     # Noises are zero mean, gaussian, and independant
 
 
@@ -110,6 +120,7 @@ sequence, independent of all quantities, and with Var [w2(k)] = m2 ** 2
 with m2 = 10m. The sensors z1 and z2 return data at the same instants of
 time.
 '''
+
 m2, H = 10, np.array([[1, 0], [1, 0]])
 V, W = noise_part_d()
 print('For part (e) Jp ~= ' + repr(round(compute_jp(), 3)) + 'm')
@@ -123,7 +134,7 @@ the same manufacturer, so that z2(k) = x1(k) + w2(k), where w2(k) = w1(k).
 def noise_part_f():
     # Process and measurement noise covariances
     V = stdev**2*np.array([[1/4*dt**4, 1/2*dt**3], [1/2*dt**3, dt**2]])
-    W = m1**2*np.array([[1.0001, 1], [1, 1.0001]])
+    W = m1**2*np.eye(N)
     return V, W
 
 
@@ -132,11 +143,10 @@ print('For part (f) Jp ~= ' + repr(round(compute_jp(), 3)) + 'm')
 
 '''
 (g) Retain the original sensor, but modify the system design by making
-it more aerodynamic and thereby reducing the effect of aerodynamic disturbances,
-so that stdev = 1m/s.
+it more aerodynamic and thereby reducing the effect of aerodynamic
+disturbances, so that stdev = 1m/s.
 '''
 
 stdev, H = 1, np.array([[1, 0]])
 V, W = noise_orig_sys()
 print('For part (g) Jp ~= ' + repr(round(compute_jp(), 3)) + 'm')
-

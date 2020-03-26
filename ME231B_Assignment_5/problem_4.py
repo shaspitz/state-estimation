@@ -9,10 +9,25 @@ UC Berkeley ME231B Assignment #5 Problem 4
 import numpy as np
 import matplotlib.pyplot as plt
 
-''' This problem involves the implementation of a time-varying Kalman filter
- for a system with uniform (ie non-Gaussian) process and measurement noises '''
+'''
+This problem involves the implementation of a time-varying Kalman filter
+for a system with uniform (ie non-Gaussian) process and measurement noises
+'''
 
-# First define global vars
+'''
+Design an optimal linear estimator for this system (KF), and
+implement a simulation of the system and a Kalman filter that produces an
+estimate as a function of k. For the simulation, draw all of the random
+variables from uniform distributions that match the required mean/variance.
+Execute this 10,000 times and plot a histogram of the resulting values for
+e(10) (make two histograms, one for each component of e(10)). Comment on
+how this compares to your answers in Problem 2c) and Problem 2d). Also give
+the ensemble average and variance for each component of e(10)
+(that is, the average over the samples from the simulations for each
+component). Compare that to the estimator's output, and briefly discuss.
+'''
+
+# Define global vars
 
 # Time-invariant linear system as given in problem statement
 N = 2
@@ -42,7 +57,8 @@ def time_update(xm, Pm):
 def meas_update(xp, Pp, z):
     K = Pp @ H.transpose() @ np.linalg.inv(H @ Pp @ H.transpose() + W)
     xm = xp + K @ (z - H @ xp)
-    Pm = (np.eye(N) - K @ H) @ Pp @ (np.eye(N) - K @ H).transpose() + K @ W @ K.transpose()
+    Pm = (np.eye(N) - K @ H) @ Pp @ (np.eye(N) - K @ H).transpose()
+    + K @ W @ K.transpose()
     return xm, Pm
 
 
@@ -51,8 +67,8 @@ def meas_update(xp, Pp, z):
 
 def sym_sys(x_true):
     # a = -sqrt(3), b = sqrt(3) for uniform dist of v_k and w_k (see writing)
-    v_k = np.array([[r_uniform(-np.sqrt(3), np.sqrt(3))], [r_uniform(-np.sqrt(3),
-        np.sqrt(3))]])  # Process noise
+    v_k = np.array([[r_uniform(-np.sqrt(3), np.sqrt(3))],
+                    [r_uniform(-np.sqrt(3), np.sqrt(3))]])  # Process noise
     w_k = np.array([r_uniform(-np.sqrt(3), np.sqrt(3))])  # measurement noise
     x_true = A @ x_true + v_k
     z = H @ x_true + w_k
@@ -71,7 +87,7 @@ x_est = np.zeros((sim_tot, T_f, N))  # zeros for initial x_est
 
 for sim in range(0, sim_tot):
 
-    # Initalize true state, a = -3, b = 3 for uniform dist of x[0] (see writing)
+    # Initalize true state, a = -3, b = 3 for uniform dist of x[0]
     x_true = np.array([[r_uniform(-3, 3)], [r_uniform(-3, 3)]])
     e[sim, 0, :] = (x_true - xm).ravel()
 
@@ -115,7 +131,7 @@ print(
     ' distribution. '
     )
 
-#  Display ensemble average, variance and est output for two components of e(10)
+#  Display ensemble average, variance and est output for each comp of e(10)
 print('Ensemble Average of First component for e(10): '
       + repr(round(np.mean(e[:, 10, 0]), 4)))
 print('Ensemble Variance of First component for e(10): '

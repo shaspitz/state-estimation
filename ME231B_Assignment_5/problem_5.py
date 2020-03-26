@@ -9,7 +9,8 @@ UC Berkeley ME231B Assignment #5 Problem 4
 import numpy as np
 import matplotlib.pyplot as plt
 
-''' In this problem we estimate the behavior of a
+'''
+In this problem we estimate the behavior of a
 city's water network, where fresh water is supplied by
 a desalination plant, and consumed at various points
 in the network. The network contains various con-
@@ -19,11 +20,20 @@ Our objective is to use noisy information about pro-
 duction and consumption levels, and noisy measure-
 ments of the amount of water in the reservoirs, to
 estimate the state of the network. We will consider 3
-networks of increasing complexity. '''
+networks of increasing complexity.
+'''
 
-# Part (a)
+'''
+(a) We will first investigate a very simplified system, with a single
+reservoir and single consumer (i.e. we only have one tank level r
+to keep track of). We will model our consumers as c(k) = m + v(k),
+where m is the typical consumption, and v(k) is a zero-mean uncertainty,
+assumed white and independent of all other quantities. Using the Kalman filter,
+estimate the actual volume of water r for various k. Also provide the associated
+uncertainty for your estimate of r. Provide this using graphs.
+'''
 
-# First define global vars
+# Define global vars
 
 # Time-invariant linear system deduced from problem statement
 N = 1
@@ -93,9 +103,17 @@ plt.xlabel('Timestep (k)')
 plt.ylabel('Uncertainty of Estimated Volume of Water')
 plt.title(r'Uncertainty of Estimated Volume of Water vs Time (Part a)')
 
-# Part (b)
+'''
+(b) We now extend the previous part by also estimating the consumption, c(k).
+We model the consumption as evolving as c(k) = c(k-1) + n(k-1), where n(k-1)
+is a zero-mean random variable, which is white and independent of all other
+quantities. Using the Kalman filter, estimate the actual volume of water r for
+various k, and the consumption rate c(k). Also provide the associated
+uncertainty for both. Provide this using graphs. How do your answers for r
+compare to the previous case?
+'''
 
-# First define global vars
+# Define global vars
 
 # Time-invariant linear system deduced from problem statement
 N = 2
@@ -176,9 +194,20 @@ plt.xlabel('Timestep (k)')
 plt.ylabel('Uncertainty of Estimated Consumption of Water')
 plt.title(r'Uncertainty of Estimated Consumption of Water vs Time (Part b)')
 
-# Part (c)
+print('The answers for r in part (a) and part (b) are shaped similarily.'
+      ' However, the steady state uncertainty from (b) was lower than that'
+      ' of part (a) as shown in the graphs.')
 
-# First define global vars
+'''
+(c) Now, we extend the system to a more complex network with four reservoirs,
+and four consumers. Using the Kalman filter, estimate the actual volume of
+water r(i) over various k for all tanks. Also provide the associated
+uncertainty. Provide this using graphs. Notice that the estimate uncertainty
+for tank 1 is lower than the solution you had for the simpler
+network, why is this?
+'''
+
+# Define global vars
 
 # Time-invariant linear system deduced from problem statement
 N = 8
@@ -291,7 +320,12 @@ print(
     ' coupled. Therefore the additional measurements of added states reduce '
     'the estimate uncertainty of tank 1.')
 
-# Part c-iii, repeat part c with tank 3 sensor inactive
+'''
+(c-iii) We will now repeat the previous problem, except that now the sensor
+of tank 3 has failed, and thus no longer provides any measurements. Modify
+your Kalman filter from before to adjust for the lost sensor, otherwise
+using previous data.
+'''
 
 # N, d, alpha, and A are same as before, H is redefined below
 H = np.concatenate((H[0:2], H[3:4]), axis=0)

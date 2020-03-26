@@ -12,7 +12,9 @@ import matplotlib.pyplot as plt
 ''' This problem involves the implementation of a time-varying Kalman filter
  for a system with Gaussian process and measurement noises '''
 
-# First define global vars
+# (a) Compute the PDF of y(1) given the observation z(1) = 2:22
+
+# Define global vars
 
 # Time-invariant linear system as given in problem statement
 N = 2

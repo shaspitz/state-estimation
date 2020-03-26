@@ -8,10 +8,18 @@ UC Berkeley ME231B Assignment #5 Problem 2
 
 import numpy as np
 
-''' This problem involves the implementation of a time-varying Kalman filter
- for a simple (scalar) system with uniform process and measurement noises '''
+'''
+This problem involves the implementation of a time-varying Kalman filter
+ for a simple (scalar) system with uniform process and measurement noises
+'''
 
-# First define global vars
+'''
+Design a Kalman filter for the system given in Problem 1. What is the Kalman
+filter estimate at time k = 1?
+Comment on how this compares to the solution you got for Problem 1.
+'''
+
+# Define global vars
 
 # Time-invariant linear system as given in problem statement
 N = 1
