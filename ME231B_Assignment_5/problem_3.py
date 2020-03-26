@@ -1,7 +1,7 @@
 '''
 Created on Mar 19, 2020
 
-@author: shawn
+@author: Shawn Marshall-Spitzbart
 
 UC Berkeley ME231B Assignment #5 Problem 2
 '''
@@ -70,4 +70,10 @@ print(
     + repr(np.round(Pm[0, 0], 4))
     )
 
-print('Comments:')
+print('The KF estimate here of 2/3 coincides with the MMSE estimate from'
+      ' problem 1. This makes sense intuitively because amongst the class'
+      ' of linear and unbiased estimators, the Kalman filter optimally'
+      ' minimizes the mean squared estimation error. The difference in'
+      ' implementation between a standard KF and the optimal estimator from'
+      ' problem 1 is that we do not compute the entire state pdf at each'
+      ' timestep for a KF, only its MMSE estimate and variance.')

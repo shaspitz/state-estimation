@@ -90,6 +90,31 @@ for sim in range(0, sim_tot):
         x_est[sim, k, :] = xm.ravel()
         e[sim, k, :] = (x_true - xm).ravel()
 
+#  Plotting
+num_bins = 20
+
+plt.figure(0)
+plt.hist(e[:, 10, 0], num_bins, facecolor='blue', edgecolor='black', alpha=1)
+plt.xlabel('First Component For Error e at timestep 10')
+plt.ylabel('Count')
+plt.title(r'Histogram of First Component for Error (e) at timestep 10')
+
+plt.figure(1)
+plt.hist(e[:, 10, 1], num_bins, facecolor='blue', edgecolor='black', alpha=1)
+plt.xlabel('Second Component For Error e at timestep 10')
+plt.ylabel('Count')
+plt.title(r'Histogram of Second Component for Error (e) at timestep 10')
+
+print(
+    'The results from these plots are similar to problem (2c) and (2d) in that'
+    ' the averages for each component of e(10) are approximately centered'
+    ' around zero. Additionally, the variances for each component of e(10) '
+    ' are relatively similar for both problems at ~ 0.7 and ~2.3'
+    ' respectively. It makes sense that each problem formulation yeilds'
+    ' similar results, since the KF doesnt require RVs to have any particular'
+    ' distribution. '
+    )
+
 #  Display ensemble average, variance and est output for two components of e(10)
 print('Ensemble Average of First component for e(10): '
       + repr(round(np.mean(e[:, 10, 0]), 4)))
@@ -109,19 +134,12 @@ print(
     + repr(round(np.mean(x_est[:, 10, 1]), 4))
       )
 
-#  Plotting
-num_bins = 20
-
-plt.figure(0)
-plt.hist(e[:, 10, 0], num_bins, facecolor='blue', edgecolor='black', alpha=1)
-plt.xlabel('First Component For Error e at timestep 10')
-plt.ylabel('Count')
-plt.title(r'Histogram of First Component for Error (e) at timestep 10')
-
-plt.figure(1)
-plt.hist(e[:, 10, 1], num_bins, facecolor='blue', edgecolor='black', alpha=1)
-plt.xlabel('Second Component For Error e at timestep 10')
-plt.ylabel('Count')
-plt.title(r'Histogram of Second Component for Error (e) at timestep 10')
+print(
+    'The ensemble averages for each component of e(10) are relatively close to'
+    ' zero, meaning that the estimator is approximately unbiased, which makes'
+    ' sense. The variance of the second component for e(10) is higher than'
+    ' that of the first component, meaning that the estimator is less'
+    ' confident in its estimate of the second state.'
+    )
 
 plt.show()
