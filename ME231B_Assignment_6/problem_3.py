@@ -16,7 +16,6 @@ comprising the height (x1 in units of m) and vertical velocity (x2 in units of
 m/s) of the blimp, driven by a random acceleration.
 '''
 
-
 '''
 (a) Write a program that computes Jp as a function of the usual Kalman filter
 matrices A, V , H, and W. Use this program to confirm that the original system

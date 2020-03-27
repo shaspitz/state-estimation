@@ -9,8 +9,10 @@ UC Berkeley ME231B Assignment #6 Problem 1
 import numpy as np
 import scipy.linalg as sp
 
-''' (a) Using the standard Kalman filter, for various k values, what
-is the variance of the posterior estimation error? '''
+'''
+(a) Using the standard Kalman filter, for various k values, what
+is the variance of the posterior estimation error?
+'''
 
 # Define global vars
 
@@ -24,9 +26,11 @@ V, W = 2, 1
 
 # Process and measurement noise are zero mean, gaussian, and independant
 
-'''Function that returns value corresponding to Gaussian dist matching
- required mean/variance for process and measurement noises.
- Note that mean = 0 and var = I for both v(k) and w(k)'''
+'''
+Function that returns value corresponding to Gaussian dist matching
+required mean/variance for process and measurement noises.
+Note that mean = 0 and var = I for both v(k) and w(k)
+'''
 
 
 def r_normal(Ex, Var): return np.random.normal(Ex, Var, 1)
@@ -85,8 +89,10 @@ for config in T_f:
           + repr(k) + ' is: ' + repr(round(Pm[0, 0], 4)))
 
 
-''' (b) What is the steady-state Kalman filter for this system? Provide the
-gain, and the steady-state posterior variance. '''
+'''
+(b) What is the steady-state Kalman filter for this system? Provide the
+gain, and the steady-state posterior variance.
+'''
 
 Pinf = sp.solve_discrete_are(A, H, V, W)  # This is Pp as k -> inf
 Kinf = Pinf * H * (H * Pinf * H + W) ** -1
@@ -109,7 +115,6 @@ print('Steady state KF posterior variance is: ' + repr(round(Pm_inf[0, 0], 4)))
 at various values for k, what is the variance of the posterior estimation
  error? Comment on how this compares to the standard Kalman filter of part a.
 '''
-
 
 # Define scalar measurement update for SSKF implementation
 # Note that this functions is equivalent to above with SSKF gain

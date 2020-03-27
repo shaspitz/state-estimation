@@ -9,9 +9,10 @@ UC Berkeley ME231B Assignment #6 Problem 2
 import numpy as np
 import scipy.linalg as sp
 import sys
+import warnings
+warnings.filterwarnings("ignore")
 
-
-# (b)Compute the steady-state Kalman filter gain Kinf, for the given system
+# (a)Compute the steady-state Kalman filter gain Kinf, for the given system
 
 # Define global vars
 
@@ -83,13 +84,13 @@ delta_list = np.array([-10, -2.01, -2.0, -1.0,
 T_f = 100000  # Simulation Timesteps (0 included)
 e_inf = np.zeros(len(delta_list))
 
-max_float = sys.float_info.max/1000000  # Prevent overflow on next step
+max_float = sys.float_info.max  # Prevent overflow on next step
 
 for i, config in np.ndenumerate(delta_list):
 
     for k in range(1, T_f):  # Note that k=0 is initialized above
 
-        if xm < sys.float_info.max/1000000:  # prevent stack overflow
+        if xm < max_float:  # prevent stack overflow
 
             # Simulate system and measurement
             x_true, z = sym_sys(x_true, config)
@@ -112,7 +113,7 @@ for i, config in np.ndenumerate(delta_list):
     # Initialize x_true at k = 0 for next config
     x_true = r_normal(0, 3)
 
-print('Our maximum of: ' + repr(round(sys.float_info.max/1000000, 4)) +
+print('Our maximum of: ' + repr(max_float) +
       ' is sufficiently large to approximate unboundedness.')
 
 for i, val in np.ndenumerate(e_inf):
@@ -122,4 +123,5 @@ for i, val in np.ndenumerate(e_inf):
         print('A delta value of ' + repr(round(delta_list[i], 4)) +
               ' produced a bounded error as k approaches infinity.')
 
-print('From this we can deduce that e(k) remains bounded for delta in [-2, 0].')
+print('From this information, and an analytical proof (see writing) we can'
+      ' deduce that e(k) remains bounded for delta in [-2, 0].')
