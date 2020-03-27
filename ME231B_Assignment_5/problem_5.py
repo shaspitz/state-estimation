@@ -134,7 +134,7 @@ def time_update_b(xm, Pm):
     # Known input, d added to system
     xp = A @ xm + np.array([[d], [0]])
     # Process noise only affects second component of state below
-    Pp = A @ Pm @ A.T + np.array([[0], [V]])
+    Pp = A @ Pm @ A.T + np.array([[0, 0], [0, V]])
     return xp, Pp
 
 
@@ -218,7 +218,7 @@ A = np.concatenate((
     np.concatenate((
         np.array([[1-2*alph, alph, alph, 0],
                   [alph, 1-2*alph, alph, 0],
-                  [alph, alph, 1-2*alph, 0],
+                  [alph, alph, 1-3*alph, 0],
                   [0, 0, alph, 1-alph]]),
         -1*np.eye(4)), axis=1),
     np.concatenate((np.zeros((4, 4)), np.eye(4)), axis=1)),
@@ -237,7 +237,8 @@ W = 25 * np.eye(4)  # z(k) is of size 4
 
 
 def time_update_c(xm, Pm):
-    xp = A @ xm
+    uk = np.array([[d, 0, 0, 0, 0, 0, 0, 0]]).T  # add input 'd' to 1st state
+    xp = A @ xm + uk
     Pp = A @ Pm @ A.T + V
     return xp, Pp
 
@@ -285,7 +286,7 @@ plt.plot(range(0, T_f), x_est[:, 0:4], linewidth=3)
 plt.xlabel('Timestep (k)')
 plt.ylabel('Estimated Volume of Water')
 plt.title(r'Estimated Volume of Water vs Time (Part c)')
-plt.legend(labels=['Tank 1', 'Tank 2', 'Tank 3', 'Tank 4'], loc="upper center")
+plt.legend(labels=['Tank 1', 'Tank 2', 'Tank 3', 'Tank 4'], loc="upper left")
 
 plt.figure(7)
 plt.plot(range(0, T_f), x_est[:, 4:9], linewidth=3)
@@ -304,7 +305,7 @@ plt.title(r'Uncertainty of Estimated Volume of Water '
           'vs Time (Part c)')
 plt.legend(labels=['Tank 1', 'Tank 2', 'Tank 3', 'Tank 4'], loc="upper right")
 
-linestyle = ['-', '--', ':', '-']
+linestyle = ['-', '--', '-', '-']
 plt.figure(9)
 for k in range(4, 8):
     plt.plot(range(0, T_f), P_est[:, k], linestyle=linestyle[k-4], linewidth=3)
@@ -312,7 +313,7 @@ plt.xlabel('Timestep (k)')
 plt.ylabel('Uncertainty of Estimated Consumption of Water')
 plt.title(r'Uncertainty of Estimated Consumption of Water '
           'vs Time (Part c)')
-plt.legend(labels=['Tank 1', 'Tank 2', 'Tank 3', 'Tank 4'], loc="upper right")
+plt.legend(labels=['Tank 1', 'Tank 2', 'Tank 3', 'Tank 4'], loc="lower left")
 
 print(
     'The estimate uncertainty for tank 1 is lower than the solution we had'
@@ -369,7 +370,7 @@ plt.plot(range(0, T_f), x_est[:, 0:4], linewidth=3)
 plt.xlabel('Timestep (k)')
 plt.ylabel('Estimated Volume of Water')
 plt.title(r'Estimated Volume of Water vs Time (Part c-iii)')
-plt.legend(labels=['Tank 1', 'Tank 2', 'Tank 3', 'Tank 4'], loc="upper center")
+plt.legend(labels=['Tank 1', 'Tank 2', 'Tank 3', 'Tank 4'], loc="upper left")
 
 plt.figure(11)
 plt.plot(range(0, T_f), x_est[:, 4:9], linewidth=3)

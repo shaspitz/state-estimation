@@ -71,8 +71,9 @@ xm, Pm = meas_update(xp, Pp, 2.22)
 
 '''
 Since output y(k) is an affine linear transformation of GRV x(k), y(k) itself
-is a GRV with mean [1 1]*xm(k) and variance [1 1]*Pm(k)*[1 1]' (see property 1
-of GRVs from chapter 8 class notes)
+is a GRV with E[y] = [1 1]*E[x(k)] = [1 1]*xm and
+Var[y] = E[(y-E[y])(y-E[y]).T] = [1 1]*Var[x]*[1 1].T = [1 1]*Pm(k)*[1 1].T
+(see property 1 of GRVs from chapter 8 class notes)
 '''
 
 
