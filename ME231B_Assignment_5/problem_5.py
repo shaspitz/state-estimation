@@ -3,7 +3,7 @@ Created on Mar 19, 2020
 
 @author: Shawn Marshall-Spitzbart
 
-UC Berkeley ME231B Assignment #5 Problem 4
+UC Berkeley ME231B Assignment #5 Problem 5
 '''
 
 import numpy as np
@@ -194,7 +194,7 @@ plt.xlabel('Timestep (k)')
 plt.ylabel('Uncertainty of Estimated Consumption of Water')
 plt.title(r'Uncertainty of Estimated Consumption of Water vs Time (Part b)')
 
-print('The answers for r in part (a) and part (b) are shaped similarily.'
+print('The answers for r(k) in part (a) and part (b) are shaped similarily.'
       ' However, the steady state uncertainty from (b) was lower than that'
       ' of part (a) as shown in the graphs.')
 
@@ -318,8 +318,8 @@ plt.legend(labels=['Tank 1', 'Tank 2', 'Tank 3', 'Tank 4'], loc="lower left")
 print(
     'The estimate uncertainty for tank 1 is lower than the solution we had'
     ' for the simpler network because the system dynamics bewteen tanks are'
-    ' coupled. Therefore the additional measurements of added states reduce '
-    'the estimate uncertainty of tank 1.')
+    ' coupled. Therefore the additional measurements of added states reduces '
+    'the estimated uncertainty of tank 1.')
 
 '''
 (c-iii) We will now repeat the previous problem, except that now the sensor
@@ -399,7 +399,7 @@ plt.title(r'Uncertainty of Estimated Consumption of Water '
           'vs Time (Part c-iii)')
 plt.legend(labels=['Tank 1', 'Tank 2', 'Tank 3', 'Tank 4'], loc="right")
 
-print('losing this sensor has slightly affected our ability to estimate'
+print('Losing this sensor has slightly affected our ability to estimate'
       ' the tank levels. As seen by comparing the graphs bewteen (c) and'
       ' (c-iii), Losing the tank 3 sensor moderately increased the uncertainty'
       ' for the estimated consumption and volume of tank 3 only. Uncertainties'
@@ -408,5 +408,3 @@ print('losing this sensor has slightly affected our ability to estimate'
       ' remained consistent. ')
 
 plt.show()
-
-print(0)

@@ -128,18 +128,58 @@ print('For part (e) Jp ~= ' + repr(round(compute_jp(), 3)) + 'm')
 '''
 (f) Retain the original GPS sensor, and add a second identical GPS sensor from
 the same manufacturer, so that z2(k) = x1(k) + w2(k), where w2(k) = w1(k).
+
+Note: This problem can be interpreted two different ways. If the statement
+"w2(k) = w1(k)" means that these RVs have the same distributions but are
+independant, then the answer to part (f) is as follows.
 '''
 
 
-def noise_part_f():
+def noise_part_f_1():
     # Process and measurement noise covariances
     V = stdev**2*np.array([[1/4*dt**4, 1/2*dt**3], [1/2*dt**3, dt**2]])
     W = m1**2*np.eye(N)
     return V, W
 
 
-V, W = noise_part_f()
-print('For part (f) Jp ~= ' + repr(round(compute_jp(), 3)) + 'm')
+V, W = noise_part_f_1()
+print('For part (f) interpretation 1, Jp ~= ' + repr(round(compute_jp(), 3))
+      + 'm')
+
+'''
+If instead the statement "w2(k) = w1(k)" means that these two RV's values are
+always equivalent, then the answer to part (f) is a little more complicated.
+When w2(k) = w1(k) = m1**2, the covariance matrix for W should be,
+m1**2 * [[1, 1], [1, 1]]
+However, this covariance matrix is not solvable by the DARE. If we instead
+perturb the diagonal terms slightly, then the DARE will solve, but will
+approach infinity as the diagonal terms approach 1.
+'''
+
+
+def noise_part_f_2(delta):
+    # Process and measurement noise covariances
+    V = stdev**2*np.array([[1/4*dt**4, 1/2*dt**3], [1/2*dt**3, dt**2]])
+    W = m1**2*np.array([[1 + delta, 1], [1, 1 + delta]])
+    return V, W
+
+
+delta = 0.1
+for i in range(0, 5):
+    V, W = noise_part_f_2(delta)
+    print('When delta = ' + repr(delta)
+          + ', Jp ~= ' + repr(round(compute_jp(), 3))
+          + 'm')
+    delta /= 10
+
+'''
+Therefore, for part (f) it makes the most sense to say that Jp -> infinity
+when w2(k) = w1(k). This makes sense because we have always assumed that
+random noise variables are independant in order
+for KF to have a solution. In this case, w1(k) and w2(k) are surely not
+independant.
+'''
+print('For part (f) interpretation 2, Pinf does not converge, Jp -> infinity')
 
 '''
 (g) Retain the original sensor, but modify the system design by making

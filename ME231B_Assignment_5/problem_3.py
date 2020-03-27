@@ -3,7 +3,7 @@ Created on Mar 19, 2020
 
 @author: Shawn Marshall-Spitzbart
 
-UC Berkeley ME231B Assignment #5 Problem 2
+UC Berkeley ME231B Assignment #5 Problem 3
 '''
 
 import numpy as np

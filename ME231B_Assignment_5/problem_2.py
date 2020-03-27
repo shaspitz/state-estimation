@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 ''' This problem involves the implementation of a time-varying Kalman filter
  for a system with Gaussian process and measurement noises '''
 
-# (a) Compute the PDF of y(1) given the observation z(1) = 2:22
+# (a) Compute the PDF of y(1) given the observation z(1) = 2.22
 
 # Define global vars
 
@@ -64,7 +64,6 @@ def sym_sys(x_true):
 # Initialize estimate and covariance of state (at k = 0)
 xm_0, Pm_0 = np.zeros((2, 1)), np.array([[3, 0], [0, 1]])
 
-# (a) Compute the PDF of y(1) given the observation z(1) = 2.22
 # First simulate prediction and measurement update steps of KF forward to k = 1
 xp, Pp = time_update(xm_0, Pm_0)
 xm, Pm = meas_update(xp, Pp, 2.22)
@@ -219,7 +218,7 @@ Var_e_10_part_d = np.var(e[:, 10, :], axis=0)
 
 print(' The expectations for each component of e(10) over the 10,000 '
       'simulations from part (d) are: ' + repr(round(E_e_10_part_d[0], 4)) +
-      ' and ' + repr(round(E_e_10_part_d[1], 4)) + ' respectivelty. Both of '
+      ' and ' + repr(round(E_e_10_part_d[1], 4)) + ' respectively. Both of '
       'these values are relatively close to the values from part (c)'
       ' of: ' + repr(round(E_e10_part_c[0, 0], 4)) + ' and '
       + repr(E_e10_part_c[1, 0])
@@ -227,7 +226,7 @@ print(' The expectations for each component of e(10) over the 10,000 '
 
 print(' The variances for each component of e(10) over the 10,000 '
       'simulations from part (d) are: ' + repr(round(Var_e_10_part_d[0], 4))
-      + ' and ' + repr(round(Var_e_10_part_d[1], 4)) + ' respectivelty. Both '
+      + ' and ' + repr(round(Var_e_10_part_d[1], 4)) + ' respectively. Both '
       'of these values are relatively close to the values from part (c)'
       ' of: ' + repr(round(Var_e10_part_c[0, 0], 4)) + ' and '
       + repr(round(Var_e10_part_c[1, 1], 4))
