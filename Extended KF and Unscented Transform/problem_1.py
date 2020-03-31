@@ -16,9 +16,9 @@ Usual independance assumptions apply
 '''
 
 '''
-Define given nonlinear system and measurement model. Note that process noise
-will be set to zero for EKF but is included in function to abide by math notation.
-Assume no inputs to system.
+Define given nonlinear system and measurement model. Note that process and
+measureent noise will be set to zero for EKF but is included in function to
+abide by math notation. Assume no inputs to system.
 '''
 
 
