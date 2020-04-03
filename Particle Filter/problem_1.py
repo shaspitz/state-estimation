@@ -7,7 +7,6 @@ UC Berkeley ME231B Assignment #8 Problem 1
 '''
 
 import numpy as np
-import scipy.signal as scp
 import matplotlib.pyplot as plt
 
 '''
@@ -70,17 +69,24 @@ num_bins = 20
 x = np.linspace(-2, 2, N)
 
 # Analytic answer from HW5 problem 1
-analytic_ans = [np.int(i >= 0) for i in x] * (1 - x/2)
+analytical_sltn = [np.int(i >= 0) for i in x] * (1 - x/2)
 
 plt.figure(0)
 plt.hist(xm, num_bins, facecolor='blue', edgecolor='black', alpha=1,
-         density = True)
-plt.plot(x, analytic_ans, linewidth=3)
+         density=True)
+plt.plot(x, analytical_sltn, linewidth=3)
 plt.xlabel('x(1)')
 plt.ylabel('f(x(1)|z(1))')
-plt.title(r'PF Approximation vs Analytical Solution for PDF of f(x(1)|z(1))')
+plt.title(r'PF Approximation vs Analytical Solution of f(x(1)|z(1))'
+          + ' with bin size = ' + repr(2/num_bins), fontsize=10)
 plt.legend(labels=['Analytical Solution', 'Particle Filter Approximation'],
            loc="best")
+
+print('The analytical solution to the PDF f(x(1)|z(1)) and the approximation'
+      ' given by the particle filter are generally similar in shape. Clearly'
+      ' the approximation was not perfect, but if we increased the number of'
+      ' particles used in the PF algorithm, it\'s approximation would approach the'
+      ' analytical solution given by the optimal estimator')
 
 plt.show()
 
