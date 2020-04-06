@@ -89,8 +89,8 @@ for i, hist_color in enumerate(['blue', 'red', 'green']):
 
 plt.xlabel('Paricle Filter Estimate at k = 1')
 plt.ylabel('Count')
-plt.title(r'PF Approximation vs Analytical Solution of f(x(1)|z(1))'
-          + ' with ' + repr(num_bins) + ' bins.', fontsize=10)
+plt.title(r'Distribution of Final Estimate for PF'
+          + ' with ' + repr(num_bins) + ' bins', fontsize=10)
 plt.legend(labels=['Np = ' + repr(Np[0]), 'Np = ' + repr(Np[1]),
                    'Np = ' + repr(Np[2])], loc="best")
 
