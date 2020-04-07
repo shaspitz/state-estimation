@@ -58,7 +58,7 @@ def meas_update(xp, Pp, z, H):
     return xm, Pm
 
 
-def KF(state_len, A, H):
+def KF(A, H):
 
     # Initialize estimate and covariance of state (at k = 0)
     if state_len == 1:
@@ -79,7 +79,7 @@ def KF(state_len, A, H):
 
 
 # Define function for particle filter implementation
-def PF(state_len, A, Np, meas_likelihood):
+def PF(A, Np, meas_likelihood):
 
     if state_len == 1:
 
@@ -89,6 +89,7 @@ def PF(state_len, A, Np, meas_likelihood):
 
             # Initialization
             xm = np.random.normal(0, 1, Np)
+            
             # Prior update/prediction step
             vk = np.random.normal(0, V, Np)
             xp = A*xm + vk
@@ -116,9 +117,12 @@ def PF(state_len, A, Np, meas_likelihood):
 
             # Initialization
             xm = np.random.normal(0, 1, (state_len, 1, Np))
+
             # Prior update/prediction step
             vk = np.random.normal(0, V[state_len-1][state_len-1], Np)
-            xp = [A @ xm[:, :, N] + np.array([[0], [vk[N]]]) for N in range(Np)]
+            vk_vec = np.zeros((state_len, 1, Np))
+            vk_vec[state_len-1, 0, :] = vk
+            xp = [A @ xm[:, :, N] + vk_vec[:, :, N] for N in range(Np)]
 
             # Measurement update step
 
@@ -158,7 +162,7 @@ state_len, A, H = 1, 1, 1
 V, W = 1, 1
 
 # Kalman Filter
-xm_kf_a, Pm_kf_a = KF(state_len, A, H)
+xm_kf_a, Pm_kf_a = KF(A, H)
 
 
 # Particle Filter
@@ -175,14 +179,14 @@ dm_a = np.zeros(len(Np_list))
 # Compute PF estimates and computation times
 for Np_iter, N in enumerate(Np_list):
     for run in range(runs):
-        xm_pf_a[Np_iter][run], comp_time_a[Np_iter][run] = PF(state_len, A, N, meas_likelihood_a)
+        xm_pf_a[Np_iter][run], comp_time_a[Np_iter][run] = PF(A, N, meas_likelihood_a)
 
     # Compute average Malahobis distance and over each set of 100 runs
     dm_a[Np_iter] = np.mean([dm(xm_kf_a, Pm_kf_a, xm_pf) for xm_pf in xm_pf_a[Np_iter]])
 
 for Np_iter, N in enumerate(Np_list):
 
-    print('For Np = ' + repr(N) + ', The average Malahobis distance comparing'
+    print('For Np = ' + repr(N) + ', the average Malahobis distance comparing'
           ' the PF estimate to the KF estimate over 100 simulations was '
           + repr(round(np.mean(dm_a[Np_iter]), 4))
           + ' and the average computation time over 100 simulations was '
@@ -199,11 +203,7 @@ state_len, A, H = 2, np.array([[1, 1], [0, 1]]), np.array([[1, 0]])
 V, W = np.array([[0, 0], [0, 1]]), 1
 
 # Kalman Filter
-xm_kf_b, Pm_kf_b = KF(state_len, A, H)
-print('part b KF:', xm_kf_b, '\n', Pm_kf_b)
-
-''' NEED TO EDIT FOR PART B (multivariable change of variables)
-'''
+xm_kf_b, Pm_kf_b = KF(A, H)
 
 
 # Particle Filter
@@ -220,14 +220,15 @@ dm_b = np.zeros(len(Np_list))
 # Compute PF estimates and computation times
 for Np_iter, N in enumerate(Np_list):
     for run in range(runs):
-        xm_pf_b[Np_iter][run], comp_time_b[Np_iter][run] = PF(state_len, A, N, meas_likelihood_b)
+        xm_pf_b[Np_iter][run], comp_time_b[Np_iter][run] = PF(A, N, meas_likelihood_b)
 
     # Compute average Malahobis distance and over each set of 100 runs
-    dm_b[Np_iter] = np.mean([dm(xm_kf_b, Pm_kf_b, xm_pf) for xm_pf in xm_pf_b[Np_iter]])
+    dm_b[Np_iter] = np.mean([dm(xm_kf_b, Pm_kf_b, xm_pf) for xm_pf in
+                             xm_pf_b[Np_iter]])
 
 for Np_iter, N in enumerate(Np_list):
 
-    print('For Np = ' + repr(N) + ', The average Malahobis distance comparing'
+    print('For Np = ' + repr(N) + ', the average Malahobis distance comparing'
           ' the PF estimate to the KF estimate over 100 simulations was '
           + repr(round(np.mean(dm_b[Np_iter]), 4))
           + ' and the average computation time over 100 simulations was '
@@ -235,11 +236,14 @@ for Np_iter, N in enumerate(Np_list):
 
 
 '''
-(c) Consider a quadruple integrator (a reasonable model for a quadcopter's horizontal dynamics)
-x(k) = [[x1], [x2], [x3], [x4]] with x(k) = [[x1(k-1) + x2(k-1)], [x2(k-1) + x3(k-1)],
-[x3(k-1) + x4(k-1)], [x4(k-1) + v(k-1)]]
+(c) Consider a quadruple integrator (a reasonable model for a quadcopter's
+horizontal dynamics) x(k) = [[x1], [x2], [x3], [x4]]
+with x(k) = [[x1(k-1) + x2(k-1)],
+            [x2(k-1) + x3(k-1)],
+            [x3(k-1) + x4(k-1)],
+            [x4(k-1) + v(k-1)]]
 '''
-
+print('Part (c):')
 state_len, A, H = 4, np.array([[1, 1, 0, 0],
                                [0, 1, 1, 0],
                                [0, 0, 1, 1],
@@ -251,68 +255,57 @@ V, W = np.array([[0, 0, 0, 0],
                  [0, 0, 0, 1]]), 1
 
 # Kalman Filter
-xm_kf_c, Pm_kf_c = KF(state_len, A, H)
-print('part c:', xm_kf_c, '\n', Pm_kf_c)
-
-''' NEED TO EDIT FOR PART C (multivariable change of variables)
-
-
-
+xm_kf_c, Pm_kf_c = KF(A, H)
 
 # Particle Filter
-# Define measurement likeleyhood, f(z|x), for PF using change of variables
-def meas_likelihood(xp, zk):
-    # return f(w|x) = f(w) = f(z-x)
-    return 1/(2*np.pi*W)*np.exp(-1/(2*W)*(zk - xp)**2)
+# Measurement likeleyhood, f(z|x) is defined the same as (b)
+meas_likelihood_c = meas_likelihood_b
 
-
-xm_pf_a = np.zeros((len(Np), runs))
-comp_time = np.zeros((len(Np), runs))
-dm_a = np.zeros(len(Np))
+xm_pf_c = np.zeros((len(Np_list), runs))
+comp_time_c = np.zeros((len(Np_list), runs))
+dm_c = np.zeros(len(Np_list))
 
 # Compute PF estimates and computation times
-for Np_iter, N in enumerate(Np):
+for Np_iter, N in enumerate(Np_list):
     for run in range(runs):
-        xm_pf_a[Np_iter][run], comp_time[Np_iter][run] = PF(N, meas_likelihood)
+        xm_pf_c[Np_iter][run], comp_time_c[Np_iter][run] = PF(A, N, meas_likelihood_c)
 
     # Compute average Malahobis distance and over each set of 100 runs
-    dm_a[Np_iter] = np.mean([dm(xm_kf_a, Pm_kf_a, xm_pf) for xm_pf in xm_pf_a[Np_iter]])
+    dm_c[Np_iter] = np.mean([dm(xm_kf_c, Pm_kf_c, xm_pf) for xm_pf in xm_pf_c[Np_iter]])
 
-for Np_iter, N in enumerate(Np):
+for Np_iter, N in enumerate(Np_list):
 
-    print('For Np = ' + repr(N) + ', The average Malahobis distance comparing'
+    print('For Np = ' + repr(N) + ', the average Malahobis distance comparing'
           ' the PF estimate to the KF estimate over 100 simulations was '
-          + repr(round(np.mean(dm_a[Np_iter]), 4))
+          + repr(round(np.mean(dm_c[Np_iter]), 4))
           + ' and the average computation time over 100 simulations was '
-          + repr(round(np.mean(comp_time[Np_iter]), 6)) + ' seconds.')
-'''
-
-
-
+          + repr(round(np.mean(comp_time_c[Np_iter]), 6)) + ' seconds.')
 
 # We plot malahobis distance because it shows how far the distributions
 # are from one another??
 
 # Plotting
 plt.figure(0)
-plt.plot(Np_list, dm_a, linewidth=3)
-plt.plot(Np_list, dm_b, linewidth=3)
+for dm in [dm_a, dm_b, dm_c]:
+    plt.plot(Np_list, dm, linewidth=3)
 plt.xlabel('Number of Particles, Np')
-plt.ylabel('PF Error Represented as Malahobis Distance')
-plt.title(r'PF Error Represented as Malahobis Distance vs Number of'
-          ' Particles')
+plt.ylabel('Average PF Error Represented as Malahobis Distance')
+plt.title(r'Average PF Error Represented as Malahobis Distance vs Number of'
+          ' Particles', fontsize=10)
 plt.xscale('log')
+plt.yscale('log')
 plt.legend(labels=['Part (a)', 'Part (b)', 'Part (c)'], loc="best")
 
 plt.figure(1)
-plt.plot(Np_list, [np.mean(comp_time_a[i]) for i in range(len(Np_list))],
-                linewidth=3)
-plt.plot(Np_list, [np.mean(comp_time_b[i]) for i in range(len(Np_list))],
-                linewidth=3)
+linestyle = ['-', '-', '--']
+for i, comp_time in enumerate([comp_time_a, comp_time_b, comp_time_c]):
+    plt.plot(Np_list, [np.mean(comp_time[i]) for i in range(len(Np_list))],
+             linewidth=3, linestyle=linestyle[i])
 plt.xlabel('Number of Particles, Np')
 plt.ylabel('Average PF Computation Time (sec)')
-plt.title(r'Average PF Computation Time vs Number of Particles')
+plt.title(r'Average PF Computation Time vs Number of Particles', fontsize=10)
 plt.xscale('log')
+plt.yscale('log')
 plt.legend(labels=['Part (a)', 'Part (b)', 'Part (c)'], loc="best")
 
 plt.show()

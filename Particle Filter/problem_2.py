@@ -110,8 +110,9 @@ print('For each value of Np, the mean of PF estimates was approximately'
       ' decreased as Np increased.'
       ' From these results we can infer that as you increase the number of'
       ' particles in your particle filter, your estimate will be more certain.'
-      ' This makes sense intuitively because when using Monte Carlo sampling'
-      ' (as we did in this PF) an approximated PDF approaches exactness as'
-      ' the number of samples used approaches infinity.')
+      ' This makes sense intuitively because all CRVs are drawn from a uniform'
+      ' distribution in the range [-1, 1], therefore estimate distributions'
+      ' should be centered around zero, with more estimates lying near zero'
+      ' as the number of particles is increased.')
 
 plt.show()
