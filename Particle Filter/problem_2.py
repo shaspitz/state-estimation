@@ -36,7 +36,7 @@ section of the PF algorithm.
 
 
 def meas_likelihood(xp):
-    if -1 <= z1 - xp or z1 - xp <= 1:
+    if -1 <= z1 - xp and z1 - xp <= 1:
         return 1 / (b - a)
     else:
         return 0

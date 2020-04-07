@@ -89,7 +89,7 @@ def PF(A, Np, meas_likelihood):
 
             # Initialization
             xm = np.random.normal(0, 1, Np)
-            
+
             # Prior update/prediction step
             vk = np.random.normal(0, V, Np)
             xp = A*xm + vk
@@ -110,7 +110,11 @@ def PF(A, Np, meas_likelihood):
                 n_index = np.nonzero(beta_sum > r)[0][0]
                 xm[i] = xp[n_index]
 
+        # Particle filter estimate, variance, and computation time
+        return np.mean(xm), timeit.default_timer() - t_start
+
     else:
+
         t_start = timeit.default_timer()
 
         for k in range(5):
@@ -140,14 +144,16 @@ def PF(A, Np, meas_likelihood):
                 n_index = np.nonzero(beta_sum > r)[0][0]
                 xm[:, :, i] = xp[n_index]
 
-    # Particle filter estimate, variance, and computation time
-    return np.mean(xm), timeit.default_timer() - t_start
+        # Particle filter estimate, variance, and computation time
+        return [np.mean(xm[k, :, :]) for k in range(state_len)], timeit.default_timer() - t_start
 
 
 # Define Malahobis distance
 def dm(xm_kf, Pm_kf, xm_pf):
+
     if state_len == 1:
         return (xm_kf - xm_pf)**2 * Pm_kf**-1
+
     else:
         return (xm_kf - xm_pf).T @ np.linalg.inv(Pm_kf) @ (xm_kf - xm_pf)
 
@@ -213,7 +219,7 @@ def meas_likelihood_b(xp, zk):
     return 1/(2*np.pi*W)*np.exp(-1/(2*W)*(zk - xp[0][0])**2)
 
 
-xm_pf_b = np.zeros((len(Np_list), runs))
+xm_pf_b = np.zeros((len(Np_list), runs, state_len))
 comp_time_b = np.zeros((len(Np_list), runs))
 dm_b = np.zeros(len(Np_list))
 
@@ -223,8 +229,7 @@ for Np_iter, N in enumerate(Np_list):
         xm_pf_b[Np_iter][run], comp_time_b[Np_iter][run] = PF(A, N, meas_likelihood_b)
 
     # Compute average Malahobis distance and over each set of 100 runs
-    dm_b[Np_iter] = np.mean([dm(xm_kf_b, Pm_kf_b, xm_pf) for xm_pf in
-                             xm_pf_b[Np_iter]])
+    dm_b[Np_iter] = np.mean([dm(xm_kf_b, Pm_kf_b, np.array([xm_pf]).T) for xm_pf in xm_pf_b[Np_iter]])
 
 for Np_iter, N in enumerate(Np_list):
 
@@ -261,7 +266,7 @@ xm_kf_c, Pm_kf_c = KF(A, H)
 # Measurement likeleyhood, f(z|x) is defined the same as (b)
 meas_likelihood_c = meas_likelihood_b
 
-xm_pf_c = np.zeros((len(Np_list), runs))
+xm_pf_c = np.zeros((len(Np_list), runs, state_len))
 comp_time_c = np.zeros((len(Np_list), runs))
 dm_c = np.zeros(len(Np_list))
 
@@ -271,7 +276,7 @@ for Np_iter, N in enumerate(Np_list):
         xm_pf_c[Np_iter][run], comp_time_c[Np_iter][run] = PF(A, N, meas_likelihood_c)
 
     # Compute average Malahobis distance and over each set of 100 runs
-    dm_c[Np_iter] = np.mean([dm(xm_kf_c, Pm_kf_c, xm_pf) for xm_pf in xm_pf_c[Np_iter]])
+    dm_c[Np_iter] = np.mean([dm(xm_kf_c, Pm_kf_c, np.array([xm_pf]).T) for xm_pf in xm_pf_c[Np_iter]])
 
 for Np_iter, N in enumerate(Np_list):
 
@@ -280,9 +285,6 @@ for Np_iter, N in enumerate(Np_list):
           + repr(round(np.mean(dm_c[Np_iter]), 4))
           + ' and the average computation time over 100 simulations was '
           + repr(round(np.mean(comp_time_c[Np_iter]), 6)) + ' seconds.')
-
-# We plot malahobis distance because it shows how far the distributions
-# are from one another??
 
 # Plotting
 plt.figure(0)
@@ -294,7 +296,8 @@ plt.title(r'Average PF Error Represented as Malahobis Distance vs Number of'
           ' Particles', fontsize=10)
 plt.xscale('log')
 plt.yscale('log')
-plt.legend(labels=['Part (a)', 'Part (b)', 'Part (c)'], loc="best")
+plt.legend(labels=['State Length = 1', 'State Length = 2', 'State Length = 4'],
+           loc="best")
 
 plt.figure(1)
 linestyle = ['-', '-', '--']
@@ -306,6 +309,40 @@ plt.ylabel('Average PF Computation Time (sec)')
 plt.title(r'Average PF Computation Time vs Number of Particles', fontsize=10)
 plt.xscale('log')
 plt.yscale('log')
-plt.legend(labels=['Part (a)', 'Part (b)', 'Part (c)'], loc="best")
+plt.legend(labels=['State Length = 1', 'State Length = 2', 'State Length = 4'],
+           loc="best")
+
+# Plot discussion:
+print('We compute the Malahobis distance for each state length and Np'
+      ' configuration as a way to non-dimensionally compare the error between'
+      ' PF and KF by both state length and number of particles implemented.'
+      ' It is useful to note that computation times for'
+      ' the PF increase linearly on a log, log scale with the number of'
+      ' particles implemented. Also, the Malahobis distance of one\'s'
+      ' PF estimate from the KF estimate increases as state length increases.')
+
+# Debugging
+'''
+print('DEBUG:')
+
+print('kf_a:\n', xm_kf_a, '\n')
+print('avg pf ests for a')
+for i in range(len(Np_list)):
+    print(np.mean(xm_pf_a[i]), 'xm_pf, part a, Np = ' + repr(Np_list[i]))
+
+print('kf_b:\n', xm_kf_b, '\n')
+print('avg pf ests for b')
+for i in range(len(Np_list)):
+    print([np.mean(xm_pf_b[i, :, j]) for j in range(2)], 'xm_pf, part b, Np = '
+          + repr(Np_list[i]))
+
+print('kf_c:\n', xm_kf_c, '\n')
+print('avg pf ests for c')
+for i in range(len(Np_list)):
+    print([np.mean(xm_pf_c[i, :, j]) for j in range(4)], 'xm_pf, part c, Np = '
+          + repr(Np_list[i]))
+
+print(Pm_kf_a, 'pm_kf_a')
+'''
 
 plt.show()
