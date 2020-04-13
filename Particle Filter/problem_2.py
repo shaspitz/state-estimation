@@ -78,7 +78,7 @@ for Np_iter, N in enumerate(Np):
 
 '''
 (a) Make a single graph, with three histograms on it overlaid,
-showing the distribution of the final error.
+showing the distribution of the final estimate.
 '''
 num_bins = 10
 plt.figure(0)
@@ -105,7 +105,7 @@ for Np_iter, N in enumerate(Np):
           + ' and the standard deviation of PF estimates is '
           + repr(round(np.std(x_est_pf[Np_iter, :]), 4)))
 
-print('For each value of Np, the mean of PF estimates was approximately'
+print('\n', 'For each value of Np, the mean of PF estimates was approximately'
       ' centered around zero, the standard deviation of estimates'
       ' decreased as Np increased.'
       ' From these results we can infer that as you increase the number of'
