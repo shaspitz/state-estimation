@@ -101,25 +101,27 @@ def finite_horizon_LQR(x0, N, Q, R, A, B, part_b):
         return x[N], J.sum()
 
 
-x0 = np.array([[30], [0]])
-print('x[N] and Total cost: ', finite_horizon_LQR(x0, N, Q, R, A, B, False))
-
 # Discretize and compute initial states from which target can be reached
-x1, x2 = np.linspace(0, 1000, 100), np.linspace(0, 1000, 100)
-'''
+x1, x2 = np.linspace(0, 500, 100), np.linspace(0, 10, 100)
+
 plt.figure(0)
-enough_fuel = np.zeros((len(x1), len(x2)), dtype=bool)
-# Brute force
+'''
+Plot was achieved by brute-force gridding of state space in x1 and x2.
+Different linspace bounds settings were tested until a clear region
+of J <= 1 could be visualized.
+'''
 for x1_i, x1_val in enumerate(x1):
     for x2_i, x2_val in enumerate(x2):
-        if finite_LQR(np.array([[x1_val], [x2_val]]), N, Q, R, A, B)[1] <= 1:
-            enough_fuel[x1_i][x2_i] = True
-            plt.plot(x1_val, x2_val, 'b')
+        if finite_horizon_LQR(np.array([[x1_val], [x2_val]]),
+                              N, Q, R, A, B, False)[1] <= 1:
+            plt.plot(x1_val, x2_val, marker='o', markersize=3, color='blue')
+        else:
+            plt.plot(x1_val, x2_val, marker='o', markersize=3, color='red')
 
-print(enough_fuel)
-plt.show()
-'''
-
+plt.title(r'Initial Conditions From Which Target Can Be Reached (in Blue), '
+          'Given Fuel Budget of J=1', fontsize=10)
+plt.xlabel('x1(0)')
+plt.ylabel('x2(0)')
 
 '''
 b. Consider the initial condition x(0) = [[408], [0]]. First, confirm that this
