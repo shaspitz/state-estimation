@@ -69,8 +69,7 @@ def finite_horizon_LQR(x0, N, Q, R, A, B, part_b):
     U[N] = S
 
     for k in range(N, 0, -1):
-        U[k-1] = Q + A.T @ U[k] @ A
-        - A.T @ U[k] @ B @ inv(R + B.T @ U[k] @ B) @ B.T @ U[k] @ A
+        U[k-1] = Q + A.T @ U[k] @ A - A.T @ U[k] @ B @ inv(R + B.T @ U[k] @ B) @ B.T @ U[k] @ A
 
     # Compute feedback gain F(k)
     F = np.zeros((N, 1, len(x0)))

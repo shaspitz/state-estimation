@@ -53,8 +53,7 @@ def meas_update(xp, Pp, z, H):
     else:
         K = Pp @ H.T @ np.linalg.inv(H @ Pp @ H.T + W)
         xm = xp + K @ (z - H @ xp)
-        Pm = (np.eye(state_len) - K @ H) @ Pp @ (np.eye(state_len) - K @ H).T
-        + K * W * K.T
+        Pm = (np.eye(state_len) - K @ H) @ Pp @ (np.eye(state_len) - K @ H).T + K * W * K.T
     return xm, Pm
 
 
