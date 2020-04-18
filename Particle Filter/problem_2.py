@@ -59,7 +59,7 @@ for Np_iter, N in enumerate(Np):
         vk = np.random.uniform(a, b, N)
         xp = xm**3 + vk
 
-        # Scale particles by measurement likelihood and apply normalization constant
+        # Scale particles by meas likelihood and apply normalization const
         beta = np.array([meas_likelihood(xp_n) for xp_n in xp])
         alpha = np.sum(beta)
         beta /= alpha

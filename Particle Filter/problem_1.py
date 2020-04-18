@@ -85,8 +85,8 @@ plt.legend(labels=['Analytical Solution', 'Particle Filter Approximation'],
 print('The analytical solution to the PDF f(x(1)|z(1)) and the approximation'
       ' given by the particle filter are generally similar in shape. Clearly'
       ' the approximation was not perfect, but if we increased the number of'
-      ' particles used in the PF algorithm, it\'s approximation would approach the'
-      ' analytical solution given by the optimal estimator')
+      ' particles used in the PF algorithm, it\'s approximation would approach'
+      ' the analytical solution given by the optimal estimator')
 
 plt.show()
 

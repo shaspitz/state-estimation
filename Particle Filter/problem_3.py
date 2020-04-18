@@ -53,7 +53,8 @@ def meas_update(xp, Pp, z, H):
     else:
         K = Pp @ H.T @ np.linalg.inv(H @ Pp @ H.T + W)
         xm = xp + K @ (z - H @ xp)
-        Pm = (np.eye(state_len) - K @ H) @ Pp @ (np.eye(state_len) - K @ H).T + K * W * K.T
+        Pm = (np.eye(state_len) - K @ H) @ Pp @ (np.eye(
+            state_len) - K @ H).T + K * W * K.T
     return xm, Pm
 
 
@@ -95,7 +96,7 @@ def PF(A, Np, meas_likelihood):
 
             # Measurement update step
 
-            # Scale particles by meas likelihood and apply normalization constant
+            # Scale particles by meas likelihood and apply normalization const
             beta = np.array([meas_likelihood(xp_n, zk[k]) for xp_n in xp])
             alpha = np.sum(beta)
             beta /= alpha
@@ -129,7 +130,7 @@ def PF(A, Np, meas_likelihood):
 
             # Measurement update step
 
-            # Scale particles by meas likelihood and apply normalization constant
+            # Scale particles by meas likelihood and apply normalization const
             beta = np.array([meas_likelihood(xp_n, zk[k]) for xp_n in xp])
             alpha = np.sum(beta)
             beta /= alpha
@@ -144,7 +145,8 @@ def PF(A, Np, meas_likelihood):
                 xm[:, :, i] = xp[n_index]
 
         # Particle filter estimate, variance, and computation time
-        return [np.mean(xm[k, :, :]) for k in range(state_len)], timeit.default_timer() - t_start
+        return [np.mean(xm[k, :, :]) for k in range(
+            state_len)], timeit.default_timer() - t_start
 
 
 # Define Malahobis distance
@@ -184,10 +186,12 @@ dm_a = np.zeros(len(Np_list))
 # Compute PF estimates and computation times
 for Np_iter, N in enumerate(Np_list):
     for run in range(runs):
-        xm_pf_a[Np_iter][run], comp_time_a[Np_iter][run] = PF(A, N, meas_likelihood_a)
+        xm_pf_a[Np_iter][run], comp_time_a[
+            Np_iter][run] = PF(A, N, meas_likelihood_a)
 
     # Compute average Malahobis distance and over each set of 100 runs
-    dm_a[Np_iter] = np.mean([dm(xm_kf_a, Pm_kf_a, xm_pf) for xm_pf in xm_pf_a[Np_iter]])
+    dm_a[Np_iter] = np.mean([dm(xm_kf_a, Pm_kf_a,
+                                xm_pf) for xm_pf in xm_pf_a[Np_iter]])
 
 for Np_iter, N in enumerate(Np_list):
 
@@ -225,10 +229,12 @@ dm_b = np.zeros(len(Np_list))
 # Compute PF estimates and computation times
 for Np_iter, N in enumerate(Np_list):
     for run in range(runs):
-        xm_pf_b[Np_iter][run], comp_time_b[Np_iter][run] = PF(A, N, meas_likelihood_b)
+        xm_pf_b[Np_iter][run], comp_time_b[
+            Np_iter][run] = PF(A, N, meas_likelihood_b)
 
     # Compute average Malahobis distance and over each set of 100 runs
-    dm_b[Np_iter] = np.mean([dm(xm_kf_b, Pm_kf_b, np.array([xm_pf]).T) for xm_pf in xm_pf_b[Np_iter]])
+    dm_b[Np_iter] = np.mean([dm(xm_kf_b, Pm_kf_b, np.array([
+        xm_pf]).T) for xm_pf in xm_pf_b[Np_iter]])
 
 for Np_iter, N in enumerate(Np_list):
 
@@ -272,10 +278,12 @@ dm_c = np.zeros(len(Np_list))
 # Compute PF estimates and computation times
 for Np_iter, N in enumerate(Np_list):
     for run in range(runs):
-        xm_pf_c[Np_iter][run], comp_time_c[Np_iter][run] = PF(A, N, meas_likelihood_c)
+        xm_pf_c[Np_iter][run], comp_time_c[
+            Np_iter][run] = PF(A, N, meas_likelihood_c)
 
     # Compute average Malahobis distance and over each set of 100 runs
-    dm_c[Np_iter] = np.mean([dm(xm_kf_c, Pm_kf_c, np.array([xm_pf]).T) for xm_pf in xm_pf_c[Np_iter]])
+    dm_c[Np_iter] = np.mean([dm(xm_kf_c, Pm_kf_c, np.array([
+        xm_pf]).T) for xm_pf in xm_pf_c[Np_iter]])
 
 for Np_iter, N in enumerate(Np_list):
 
@@ -319,29 +327,5 @@ print('We compute the Malahobis distance for each state length and Np'
       ' the PF increase linearly on a log, log scale with the number of'
       ' particles implemented. Also, the Malahobis distance of one\'s'
       ' PF estimate from the KF estimate increases as state length increases.')
-
-# Debugging
-'''
-print('DEBUG:')
-
-print('kf_a:\n', xm_kf_a, '\n')
-print('avg pf ests for a')
-for i in range(len(Np_list)):
-    print(np.mean(xm_pf_a[i]), 'xm_pf, part a, Np = ' + repr(Np_list[i]))
-
-print('kf_b:\n', xm_kf_b, '\n')
-print('avg pf ests for b')
-for i in range(len(Np_list)):
-    print([np.mean(xm_pf_b[i, :, j]) for j in range(2)], 'xm_pf, part b, Np = '
-          + repr(Np_list[i]))
-
-print('kf_c:\n', xm_kf_c, '\n')
-print('avg pf ests for c')
-for i in range(len(Np_list)):
-    print([np.mean(xm_pf_c[i, :, j]) for j in range(4)], 'xm_pf, part c, Np = '
-          + repr(Np_list[i]))
-
-print(Pm_kf_a, 'pm_kf_a')
-'''
 
 plt.show()
