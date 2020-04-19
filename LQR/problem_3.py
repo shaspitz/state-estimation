@@ -102,7 +102,7 @@ def finite_horizon_LQR(x0, N, Q, R, A, B, part_b):
 
 
 # Discretize and compute initial states from which target can be reached
-x1, x2 = np.linspace(0, 500, 100), np.linspace(0, 10, 100)
+x1, x2 = np.linspace(-900, 900, 100), np.linspace(-15, 15, 100)
 
 plt.figure(0)
 '''
