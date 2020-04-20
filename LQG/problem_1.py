@@ -24,6 +24,7 @@ u(0) = 0. Compute the optimal control u(1) with respect to the cost J.
 '''
 A, B, H = 0.5, 0.4, 1.0
 V, W = 0.2, 0.3
+S, Q, R = 1, 1, 2
 
 '''
 Note that this is a stochastic system with imperfect state information.
@@ -55,6 +56,26 @@ xp_1, Pp_1 = time_update(E_x0, Var_x0, 0)
 x_est_1, P_est_1 = meas_update(xp_1, Pp_1, 0.9)
 print('The estimate for x at k = 1 is ' + repr(round(x_est_1, 4)))
 
-# Note that 
+'''
+Note that u_opt(k=1) is exclusively a function of E[x(1)],
+which is affected by the applied input, u(k=0)
+'''
 
+# Initialize Ricatti equation with U(2) = S, iterate backwards for U(1)
+U = np.zeros(4)
+U[3] = S
 
+for k in range(3, 1, -1):
+    U[k-1] = Q + A*U[k]*A - A*U[k]*B*(R + B*U[k]*B)**-1*B*U[k]*A
+
+# Compute feedback gain F(k=1)
+F = np.zeros(3)
+
+for k in range(3, 1, -1):
+    F[k-1] = (R + B*U[k]*B)**-1*B*U[k]*A
+
+# Implement linear feedback policy to obtain optimal input at k = 1
+u_opt_1 = -F[1]*x_est_1
+
+print('The optimal control input, u(1) with respect to the cost J is '
+      + repr(round(u_opt_1, 4)))
