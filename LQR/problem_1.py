@@ -38,7 +38,7 @@ for k in range(N, 0, -1):
 # Implement controller (linear feedback gain)
 u_opt, x = np.zeros(2), np.array([2.0, 0, 0])
 
-for k in range(2):
+for k in range(N):
     u_opt[k] = -F[k]*x[k]
     print('Optimal inpunt u(' + repr(k) + ') = ' + repr(round(u_opt[k], 4)))
 

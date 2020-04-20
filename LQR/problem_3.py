@@ -110,8 +110,8 @@ Plot was achieved by brute-force gridding of state space in x1 and x2.
 Different linspace bounds settings were tested until a clear region
 of J <= 1 could be visualized.
 '''
-for x1_i, x1_val in enumerate(x1):
-    for x2_i, x2_val in enumerate(x2):
+for x1_val in x1:
+    for x2_val in x2:
         if finite_horizon_LQR(np.array([[x1_val], [x2_val]]),
                               N, Q, R, A, B, False)[1] <= 1:
             plt.plot(x1_val, x2_val, marker='o', markersize=3, color='blue')

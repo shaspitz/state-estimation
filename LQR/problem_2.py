@@ -54,7 +54,7 @@ for i, config in enumerate(configs):
     print('The infinite horizon LQR gain for part ' + config + ' is '
           + repr([round(comp, 4) for comp in F_inf[i, 0, :]]))
 
-print('Configurations (A) and (C) produced the same LQR gains since Q and R'
+print('\n', 'Configurations (A) and (C) produced the same LQR gains since Q and R'
       ' from config (A) are proportionally scaled by 1/2 compared to Q and R'
       ' from config (C). The LQR gains from config (B) were larger than those'
       ' of (A) and (C), since the first term in the Q matrix is 4 times the R'
@@ -63,7 +63,7 @@ print('Configurations (A) and (C) produced the same LQR gains since Q and R'
       ' affects your LQR feedback policy, not the numerical values themselves.'
       ' Configurations (D) and (E) had the same LQR feedback policy,'
       ' suggesting that the non-diagonal terms in Q did not affect the LQR'
-      ' solution for this particular system.')
+      ' solution for this particular system.', '\n')
 
 '''
 b. Compute the closed-loop eigenvalues for each system.
