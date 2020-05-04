@@ -104,7 +104,7 @@ into KF posterior variance (Pm as k -> inf)
 Note: Pp converges to Pinf as k -> inf. Since K(k) also converges to to Kinf,
 Pm must converge to our SSKF posterior variance using a measurement update.
 '''
-Pm_inf = (np.eye(N) - Kinf*H)*Pp*(np.eye(N) - Kinf*H) + Kinf*W*Kinf
+Pm_inf = (np.eye(N) - Kinf*H)*Pinf*(np.eye(N) - Kinf*H) + Kinf*W*Kinf
 
 print('Steady state KF gain is: ' + repr(round(Kinf[0, 0], 4)))
 print('Steady state KF posterior variance is: ' + repr(round(Pm_inf[0, 0], 4)))
